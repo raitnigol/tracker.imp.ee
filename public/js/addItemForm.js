@@ -1,0 +1,114 @@
+document.getElementById('addItemForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const item = document.getElementById('itemName').value;
+    const boughtFor = document.getElementById('itemBoughtFor').value;
+    const soldFor = document.getElementById('itemSoldFor').value;
+    addItem(item, parseFloat(boughtFor), parseFloat(soldFor));
+});
+
+function showNotification(message) {
+    var notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.style.display = 'block';
+    notification.classList.add('show');
+
+    setTimeout(() => {
+        notification.classList.remove('show');
+        notification.style.display = 'none';
+    }, 3000);
+}
+
+function addItem(item, boughtFor, soldFor) {
+    fetch('/items', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+            item: item,
+            bought_for: boughtFor,
+            sold_for: soldFor
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Failed to add item. Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Item added successfully:', data);
+        showNotification('Item added successfully!');
+        addRowToItemsTable(item, boughtFor, soldFor, data.id);  // Ensure this function properly updates the UI
+    })
+    .catch(error => {
+        console.error('Error adding item:', error);
+        showNotification(error.message);
+    });
+}
+
+function addRowToItemsTable(item, boughtFor, soldFor, id) {
+    const table = document.getElementById('itemsList').getElementsByTagName('tbody')[0];
+    const newRow = table.insertRow();
+    newRow.innerHTML = `
+        <td>${item}</td>
+        <td>${boughtFor}</td>
+        <td>${soldFor}</td>
+        <td>
+            <button onclick="editItem(${id})" class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+            <button onclick="deleteItem(${id})" class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+        </td>
+    `;
+}
+
+function editItem(id) {
+    console.log('Editing item with ID:', id);
+    // Further logic for editing an item should go here
+}
+
+function deleteItem(id) {
+    if (confirm('Are you sure you want to delete this item?')) {
+        fetch(`/items/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to delete the item.');
+            }
+            showNotification('Item deleted successfully!');
+            fetchItems(); // Refresh the items list
+        })
+        .catch(error => {
+            console.error('Error deleting item:', error);
+            showNotification(error.message);
+        });
+    }
+}
+
+function fetchItems() {
+    const token = localStorage.getItem('token');
+    if (token) {
+        fetch('/items', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(items => {
+            const tbody = document.getElementById('itemsList').getElementsByTagName('tbody')[0];
+            tbody.innerHTML = '';  // Clear existing entries
+            items.forEach(item => {
+                addRowToItemsTable(item.item, item.bought_for, item.sold_for, item.id);
+            });
+        })
+        .catch(error => console.error('Error fetching items:', error));
+    }
+}
+
+document.addEventListener('DOMContentLoaded', fetchItems);
