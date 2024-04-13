@@ -62,20 +62,22 @@ body, html {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0,0,0,0.4);
+    background-color: rgba(0,0,0,0.4); /* Dimmed background */
     display: flex;
     align-items: center;
     justify-content: center;
+    animation: fadeIn 0.3s;
 }
 
 .modal-content {
     background-color: #fefefe;
+    margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 90%;
-    max-width: 400px; /* Smaller width for better mobile handling */
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    width: 50%; /* Adaptive width, you can use max-width for responsiveness */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 10px; /* Rounded corners */
+    animation: slideDown 0.3s;
 }
 
 .close {
@@ -148,5 +150,23 @@ th {
 
     .site-header, .container {
         width: 100%; /* Use full width on smaller screens */
+    }
+}
+/* Animations */
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes slideDown {
+    from {transform: translateY(-20px);}
+    to {transform: translateY(0);}
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .modal-content {
+        width: 90%; /* Smaller width on smaller screens */
+        padding: 10px; /* Smaller padding on smaller screens */
     }
 }
