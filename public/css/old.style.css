@@ -1,3 +1,14 @@
+.modal-buttons {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 20px;
+}
+
+th.actions, td.actions {
+    width: 100px; /* Adjust based on your preference and the size of the icons */
+    text-align: center; /* Center-align the content of the Actions column */
+}
+
 body, html {
     height: 100%;
     margin: 0;
@@ -7,31 +18,18 @@ body, html {
     justify-content: center;
     text-align: center;
     background-color: #f4f4f4;
-    flex-direction: column;
-}
-
-.site-header {
-    width: 100%;
-    padding: 10px 20px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header-controls {
-    display: flex;
-    gap: 10px;
 }
 
 .container {
-    width: 100%;
-    max-width: 800px; /* Set a max-width for larger screens */
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header {
     margin-top: 20px;
+    display: flex;
+    justify-content: center;
 }
 
 .notification {
@@ -56,7 +54,7 @@ body, html {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 1;
     left: 0;
     top: 0;
     width: 100%;
@@ -70,17 +68,18 @@ body, html {
 
 .modal-content {
     background-color: #fefefe;
+    margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 90%;
-    max-width: 400px; /* Smaller width for better mobile handling */
-    border-radius: 5px;
+    width: 80%;
+    max-width: 500px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 5px;
 }
 
 .close {
     color: #aaa;
-    float: right;
+    float:right;
     font-size: 28px;
     font-weight: bold;
 }
@@ -127,26 +126,44 @@ th {
     background: none;
     border: none;
     cursor: pointer;
-    color: inherit;
+    color: inherit; /* Inherits from parent, or set explicitly */
     padding: 5px;
     margin: 0 2px;
+
 }
 
 .edit-btn {
-    color: #4CAF50;
+    color: #4CAF50; /* Example: Green for edit */
 }
 
 .delete-btn {
-    color: #f44336;
+    color: #f44336; /* Example: Red for delete */
+}
+
+.delete-btn:hover {
+    opacity: 0.7;
+}
+
+.action-btn i {
+    font-size: 1.2rem; /* Adjust size as needed */
 }
 
 @media only screen and (max-width: 600px) {
-    .modal-content, .btn, input[type="text"], input[type="password"], input[type="number"] {
-        width: 100%; /* Ensure full width usage for smaller screens */
-        padding: 10px; /* Larger padding for better touch interaction */
+    .modal-content {
+        width: 95%; /* Take up nearly the whole width on smaller screens */
+        padding: 20px; /* Increase padding */
     }
 
-    .site-header, .container {
-        width: 100%; /* Use full width on smaller screens */
+    .btn, input[type="text"], input[type="password"], input[type="number"] {
+        padding: 12px 20px; /* Increase padding for better touch interaction */
+        font-size: 16px; /* Increase font size */
+    }
+
+    .container, .modal-content, .btn {
+        width: 100%; /* Ensure full width usage for smaller screens */
+    }
+
+    h1 {
+        font-size: 24px; /* Larger text for better readability */
     }
 }

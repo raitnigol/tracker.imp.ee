@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Initialize event listeners
+    // Initialize event listeners for login and register buttons
     document.getElementById('loginBtn').addEventListener('click', function() {
         showModal('loginModal');
     });
@@ -8,10 +8,16 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     document.getElementById('logoutBtn').addEventListener('click', logout);
 
+    // Add new item button (assuming this button is part of your HTML)
+    document.getElementById('addItemBtn').addEventListener('click', function() {
+        showModal('addItemModal');
+    });
+
     // Ensure modals do not display unless called
     closeModal('loginModal');
     closeModal('registerModal');
-
+    closeModal('addItemModal'); // Assuming you have an add item modal
+    closeModal('editItemModal');
     // Authentication check
     if (localStorage.getItem('token')) {
         validateToken();
@@ -92,8 +98,8 @@ function fetchItems() {
         })
         .then(response => response.json())
         .then(items => {
-            const table = document.getElementById('itemsList').getElementsByTagName('tbody')[0];
-            table.innerHTML = '';
+            const tbody = document.getElementById('itemsList').getElementsByTagName('tbody')[0];
+            tbody.innerHTML = '';
             items.forEach(item => {
                 addRowToItemsTable(item.item, item.bought_for, item.sold_for, item.id);
             });

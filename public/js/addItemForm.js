@@ -1,10 +1,33 @@
-document.getElementById('addItemForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const item = document.getElementById('itemName').value;
-    const boughtFor = document.getElementById('itemBoughtFor').value;
-    const soldFor = document.getElementById('itemSoldFor').value;
-    addItem(item, parseFloat(boughtFor), parseFloat(soldFor));
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('addItemForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const item = document.getElementById('itemName').value;
+        const boughtFor = document.getElementById('itemBoughtFor').value;
+        const soldFor = document.getElementById('itemSoldFor').value;
+        addItem(item, parseFloat(boughtFor), parseFloat(soldFor));
+    });
+
+    document.getElementById('editItemForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        updateItem();
+    });
+
+    fetchItems();
+    closeModal('loginModal');
+    closeModal('registerModal');
+    closeModal('addItemModal');
+    closeModal('editItemModal');
 });
+
+function showModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = 'flex';
+}
+
+function closeModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.style.display = 'none';
+}
 
 function showNotification(message) {
     var notification = document.getElementById('notification');
@@ -25,11 +48,7 @@ function addItem(item, boughtFor, soldFor) {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify({
-            item: item,
-            bought_for: boughtFor,
-            sold_for: soldFor
-        })
+        body: JSON.stringify({ item: item, bought_for: boughtFor, sold_for: soldFor })
     })
     .then(response => {
         if (!response.ok) {
@@ -38,9 +57,12 @@ function addItem(item, boughtFor, soldFor) {
         return response.json();
     })
     .then(data => {
-        console.log('Item added successfully:', data);
         showNotification('Item added successfully!');
-        addRowToItemsTable(item, boughtFor, soldFor, data.id);  // Ensure this function properly updates the UI
+        addRowToItemsTable(item, boughtFor, soldFor, data.id);
+        closeModal('addItemModal');
+        document.getElementById('itemName').value = '';
+        document.getElementById('itemBoughtFor').value = '';
+        document.getElementById('itemSoldFor').value = '';
     })
     .catch(error => {
         console.error('Error adding item:', error);
@@ -55,7 +77,7 @@ function addRowToItemsTable(item, boughtFor, soldFor, id) {
         <td>${item}</td>
         <td>${boughtFor}</td>
         <td>${soldFor}</td>
-        <td>
+        <td class="actions">
             <button onclick="editItem(${id})" class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
             <button onclick="deleteItem(${id})" class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
         </td>
@@ -63,8 +85,55 @@ function addRowToItemsTable(item, boughtFor, soldFor, id) {
 }
 
 function editItem(id) {
-    console.log('Editing item with ID:', id);
-    // Further logic for editing an item should go here
+    fetch(`/items/${id}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('editItemId').value = id;
+        document.getElementById('editItemName').value = data.item;
+        document.getElementById('editItemBoughtFor').value = data.bought_for;
+        document.getElementById('editItemSoldFor').value = data.sold_for;
+        showModal('editItemModal');
+    })
+    .catch(error => {
+        console.error('Error fetching item details:', error);
+    });
+}
+
+function updateItem() {
+    const id = document.getElementById('editItemId').value;
+    const item = document.getElementById('editItemName').value;
+    const boughtFor = document.getElementById('editItemBoughtFor').value;
+    const soldFor = document.getElementById('editItemSoldFor').value;
+
+    fetch(`/items/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ item: item, bought_for: boughtFor, sold_for: soldFor })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Failed to update item. Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        showNotification('Item updated successfully!');
+        fetchItems(); // Refresh the list
+        closeModal('editItemModal');
+    })
+    .catch(error => {
+        console.error('Error updating item:', error);
+        showNotification(error.message);
+    });
 }
 
 function deleteItem(id) {
@@ -102,13 +171,9 @@ function fetchItems() {
         .then(response => response.json())
         .then(items => {
             const tbody = document.getElementById('itemsList').getElementsByTagName('tbody')[0];
-            tbody.innerHTML = '';  // Clear existing entries
-            items.forEach(item => {
-                addRowToItemsTable(item.item, item.bought_for, item.sold_for, item.id);
-            });
+            tbody.innerHTML = ''; // Clear the table first
+            items.forEach(item => addRowToItemsTable(item.item, item.bought_for, item.sold_for, item.id));
         })
         .catch(error => console.error('Error fetching items:', error));
     }
 }
-
-document.addEventListener('DOMContentLoaded', fetchItems);

@@ -8,15 +8,15 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <header class="site-header">
+    <div class="container">
         <h1>Nigol's Collection Tracker</h1>
-        <div class="header-controls">
+        <div class="header">
             <button id="loginBtn" class="btn">Log In</button>
             <button id="registerBtn" class="btn">Register</button>
             <button id="logoutBtn" class="btn" onclick="logout()" style="display: none;">Log Out</button>
-            <span id="userStatus" class="user-status"></span>
         </div>
-    </header>
+        <span id="userStatus" class="user-status"></span>
+    </div>
 
     <!-- Login Modal -->
     <div id="loginModal" class="modal">
@@ -42,51 +42,26 @@
         </div>
     </div>
 
-<!-- Edit Item Modal -->
-<div id="editItemModal" class="modal">
-    <div class="modal-content">
-        <span onclick="closeModal('editItemModal')" class="close">&times;</span>
-        <h2>Edit Item</h2>
-        <form id="editItemForm">
-            <label for="editItemName">Item:</label>
-            <input type="text" id="editItemName" placeholder="Item name" required>
-            <label for="editItemBoughtFor">Bought For:</label>
-            <input type="number" id="editItemBoughtFor" placeholder="Bought for (EUR)" required>
-            <label for="editItemSoldFor">Sold For:</label>
-            <input type="number" id="editItemSoldFor" placeholder="Sold for (EUR)" required>
-            <input type="hidden" id="editItemId">
-            <button type="submit" class="btn add-btn">Update Item</button>
-        </form>
-    </div>
-</div>
-
-
     <!-- Item Management Section -->
     <div id="itemManagement" style="display: none;">
         <div id="notification" class="notification" style="display: none;"></div>
-        <button id="addItemBtn" class="btn" onclick="showModal('addItemModal')">Add New Item</button>
-        <div id="addItemModal" class="modal">
-            <div class="modal-content">
-                <span onclick="closeModal('addItemModal')" class="close">&times;</span>
-                <h2>Add New Item</h2>
-                <form id="addItemForm">
-                    <label for="itemName">Item:</label>
-                    <input type="text" id="itemName" placeholder="Item name" required>
-                    <label for="itemBoughtFor">Bought For:</label>
-                    <input type="number" id="itemBoughtFor" placeholder="Bought for (EUR)" required>
-                    <label for="itemSoldFor">Sold For:</label>
-                    <input type="number" id="itemSoldFor" placeholder="Sold for (EUR)" required>
-                    <button type="submit" class="btn add-btn">Add Item</button>
-                </form>
-            </div>
-        </div>
+        <h2>Add New Item</h2>
+        <form id="addItemForm">
+            <label for="itemName">Item:</label>
+            <input type="text" id="itemName" placeholder="Item name" required>
+            <label for="itemBoughtFor">Bought For:</label>
+            <input type="number" id="itemBoughtFor" placeholder="Bought for (EUR)" required>
+            <label for="itemSoldFor">Sold For:</label>
+            <input type="number" id="itemSoldFor" placeholder="Sold for (EUR)" required>
+            <button type="submit" class="btn add-btn">Add Item</button>
+        </form>
         <table id="itemsList">
             <thead>
                 <tr>
                     <th>Item</th>
                     <th>Bought For</th>
                     <th>Sold For</th>
-                    <th>Actions</th>
+                    <th class="actions">Actions</th>
                 </tr>
             </thead>
             <tbody>
