@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         const item = document.getElementById('itemName').value;
         const boughtFor = document.getElementById('itemBoughtFor').value;
-        const soldFor = document.getElementById('itemSoldFor').value;
+        const soldFor = document.getElementById('itemSoldFor').value || 0;
         addItem(item, parseFloat(boughtFor), parseFloat(soldFor));
     });
 
@@ -71,12 +71,13 @@ function addItem(item, boughtFor, soldFor) {
 }
 
 function addRowToItemsTable(item, boughtFor, soldFor, id) {
+    const soldDisplay = soldFor == 0 ? "Item not sold" : `${soldFor} EUR`;
     const table = document.getElementById('itemsList').getElementsByTagName('tbody')[0];
     const newRow = table.insertRow();
     newRow.innerHTML = `
         <td>${item}</td>
-        <td>${boughtFor}</td>
-        <td>${soldFor}</td>
+        <td>${boughtFor} EUR</td>
+        <td>${soldDisplay}</td>
         <td class="actions">
             <button onclick="editItem(${id})" class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
             <button onclick="deleteItem(${id})" class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
