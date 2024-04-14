@@ -77,6 +77,7 @@ function updateLoginStatus() {
     }
 }
 
+// Fetch all main items and their sub-items
 function fetchItems() {
     const token = localStorage.getItem('token');
     if (token) {
@@ -89,11 +90,46 @@ function fetchItems() {
         .then(response => response.json())
         .then(items => {
             const tbody = document.getElementById('itemsList').getElementsByTagName('tbody')[0];
-            tbody.innerHTML = '';
+            tbody.innerHTML = ''; // Clear the table first
             items.forEach(item => {
                 addRowToItemsTable(item.item, item.bought_for, item.sold_for, item.id);
+                fetchSubItemsForItem(item.id);
             });
         })
         .catch(error => console.error('Error fetching items:', error));
+    }
+}
+
+// Fetch sub-items for a specific main item
+function fetchSubItemsForItem(mainItemId) {
+    fetch(`/items/${mainItemId}/sub-items`, {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(subItems => {
+        subItems.forEach(subItem => {
+            addSubItemToTable(subItem, mainItemId);
+        });
+    })
+    .catch(error => console.error('Error fetching sub-items:', error));
+}
+
+// Append sub-items directly after their corresponding main item in the table
+function addSubItemToTable(subItem, mainItemId) {
+    const mainItemRow = document.querySelector(`#item-${mainItemId}`);
+    if (mainItemRow) {
+        const subItemRow = document.createElement('tr');
+        subItemRow.innerHTML = `
+            <td class="sub-item">${subItem.name}</td>
+            <td>${subItem.bought_for} EUR</td>
+            <td>${subItem.sold_for} EUR</td>
+            <td>Sub-item actions here</td>
+        `;
+        mainItemRow.insertAdjacentElement('afterend', subItemRow);
+    } else {
+        console.error('Main item row not found for ID:', mainItemId);
     }
 }

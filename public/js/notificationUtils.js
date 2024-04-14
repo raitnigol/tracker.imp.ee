@@ -1,4 +1,4 @@
-export function showNotification(message) {
+function showNotification(message) {
     var notification = document.getElementById('notification');
     notification.textContent = message;
     notification.style.display = 'block';
