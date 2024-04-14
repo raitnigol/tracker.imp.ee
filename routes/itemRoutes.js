@@ -26,6 +26,23 @@ router.post('/items', verifyToken, (req, res) => {
     });
 });
 
+// POST endpoint to add a sub-item
+router.post('/sub-items', verifyToken, (req, res) => {
+    const { main_item_id, sub_item, bought_for, sold_for } = req.body;
+    const user_id = req.userId;  // Retrieved from token verification middleware
+
+    const sql = `INSERT INTO sub_items (main_item_id, sub_item, bought_for, sold_for, user_id) 
+                 VALUES (?, ?, ?, ?, ?)`;
+    db.run(sql, [main_item_id, sub_item, bought_for, sold_for, user_id], function(err) {
+        if (err) {
+            console.error('Database error:', err.message);
+            return res.status(500).send({ message: "Failed to add sub-item due to database error." });
+        }
+        res.status(201).send({ id: this.lastID });
+    });
+});
+
+
 // GET endpoint to fetch all items for a user
 router.get('/items', verifyToken, (req, res) => {
     const userId = req.userId;
