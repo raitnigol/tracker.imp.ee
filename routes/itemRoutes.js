@@ -71,6 +71,17 @@ router.get('/items/:id', verifyToken, (req, res) => {
     });
 });
 
+router.get('/items/:id/sub-items', verifyToken, (req, res) => {
+    const mainItemId = req.params.id;
+    db.all(`SELECT * FROM sub_items WHERE main_item_id = ?`, [mainItemId], (err, rows) => {
+        if (err) {
+            console.error("Database error:", err);
+            return res.status(500).send({ message: 'Error fetching sub-items from the database' });
+        }
+        res.json(rows);
+    });
+});
+
 // PUT endpoint to update an item by ID
 router.put('/items/:id', verifyToken, (req, res) => {
     const { id } = req.params;

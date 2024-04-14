@@ -46,17 +46,18 @@
 <div id="editItemModal" class="modal">
     <div class="modal-content">
         <span onclick="closeModal('editItemModal')" class="close">&times;</span>
-        <h2>Edit Item</h2>
+        <h2>Edit Main Item</h2>
         <form id="editItemForm">
-            <label for="editItemName">Item:</label>
-            <input type="text" id="editItemName" placeholder="Item name" required>
-            <label for="editItemBoughtFor">Bought For:</label>
-            <input type="number" id="editItemBoughtFor" placeholder="Bought for (EUR)" required>
-            <label for="editItemSoldFor">Sold For:</label>
-            <input type="number" id="editItemSoldFor" placeholder="Sold for (EUR)">
             <input type="hidden" id="editItemId">
-            <button type="submit" class="btn add-btn">Update Item</button>
+            <input type="text" id="editItemName" placeholder="Item name" required>
+            <input type="number" id="editItemBoughtFor" placeholder="Bought for (EUR)" required>
+            <input type="number" id="editItemSoldFor" placeholder="Sold for (EUR)">
+            <button type="submit" class="btn save-btn">Save Changes</button>
         </form>
+        <h3>Sub-Items</h3>
+        <div id="subItemsContainer"></div>
+        <button onclick="addSubItemField()" class="btn add-btn">Add Sub-item</button>
+        <button onclick="saveSubItems()" class="btn save-btn">Save Sub-items</button>
     </div>
 </div>
 
@@ -94,6 +95,7 @@
             </tbody>
         </table>
     </div>
+
 
     <!-- JavaScript Files -->
     <script src="js/utilities.js"></script>
