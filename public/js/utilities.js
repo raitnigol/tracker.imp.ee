@@ -26,16 +26,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-function showModal(modalId) {
-    var modal = document.getElementById(modalId);
-    modal.style.display = 'flex';
-}
-
-function closeModal(modalId) {
-    var modal = document.getElementById(modalId);
-    modal.style.display = 'none';
-}
-
 function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('username');

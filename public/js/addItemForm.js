@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         const item = document.getElementById('itemName').value;
         const boughtFor = document.getElementById('itemBoughtFor').value;
-        const soldFor = document.getElementById('itemSoldFor').value || 0;
+        const soldFor = document.getElementById('itemSoldFor').value;
         addItem(item, parseFloat(boughtFor), parseFloat(soldFor));
     });
 
@@ -18,28 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
     closeModal('addItemModal');
     closeModal('editItemModal');
 });
-
-function showModal(modalId) {
-    var modal = document.getElementById(modalId);
-    modal.style.display = 'flex';
-}
-
-function closeModal(modalId) {
-    var modal = document.getElementById(modalId);
-    modal.style.display = 'none';
-}
-
-function showNotification(message) {
-    var notification = document.getElementById('notification');
-    notification.textContent = message;
-    notification.style.display = 'block';
-    notification.classList.add('show');
-
-    setTimeout(() => {
-        notification.classList.remove('show');
-        notification.style.display = 'none';
-    }, 3000);
-}
 
 function addItem(item, boughtFor, soldFor) {
     fetch('/items', {
@@ -71,13 +49,12 @@ function addItem(item, boughtFor, soldFor) {
 }
 
 function addRowToItemsTable(item, boughtFor, soldFor, id) {
-    const soldDisplay = soldFor == 0 ? "Item not sold" : `${soldFor} EUR`;
     const table = document.getElementById('itemsList').getElementsByTagName('tbody')[0];
     const newRow = table.insertRow();
     newRow.innerHTML = `
         <td>${item}</td>
-        <td>${boughtFor} EUR</td>
-        <td>${soldDisplay}</td>
+        <td>${boughtFor}</td>
+        <td>${soldFor}</td>
         <td class="actions">
             <button onclick="editItem(${id})" class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
             <button onclick="deleteItem(${id})" class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
