@@ -1,7 +1,7 @@
 import { displayPurchases } from './ui.js';
 
 let currentPage = 1;
-export const itemsPerPage = 3;
+export const itemsPerPage = 4;
 
 export function updatePagination(currentPage, totalPages) {
   const paginationContainer = document.getElementById('pagination-controls');

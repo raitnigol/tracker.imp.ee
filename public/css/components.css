@@ -1,0 +1,153 @@
+button {
+    font-family: var(--font-primary);
+    font-size: 14px;
+    padding: 10px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: var(--primary-color-dark);
+  }
+  
+  .action-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  
+  .action-button.secondary {
+    background-color: #f0f0f0;
+    color: var(--secondary-color);
+  }
+  
+  .action-button.secondary:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .action-button.delete, .action-button.delete-button {
+    background-color: #ffebee;
+    color: var(--error-color);
+  }
+  
+  .action-button.delete:hover, .action-button.delete-button:hover {
+    background-color: #ffcdd2;
+  }
+  
+  .purchase-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    width: 100%; /* Ensure the card takes full width of its grid cell */
+    height: 250px; /* Set a fixed height for all cards */
+    min-height: 250px;
+  }
+  
+  .purchase-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.12);
+  }
+  
+  .purchase-card.placeholder {
+    background-color: transparent;
+    box-shadow: none;
+    border: 2px dashed #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #999;
+    font-style: italic;
+  }
+  
+  .purchase-header {
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 12px;
+  }
+  
+  .purchase-header h3 {
+    margin: 0;
+    font-size: 1.4em;
+    color: var(--primary-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Add ellipsis for long titles */
+  }
+  
+  .purchase-info {
+    font-size: 1em;
+    color: var(--color-text-light);
+    margin-bottom: 16px;
+    flex-grow: 1; /* Allow this to grow and take up available space */
+    overflow: hidden; /* Hide overflow content */
+  }
+  
+  .purchase-profit {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-top: auto; /* Push to the bottom of the card */
+    padding: 8px;
+    border-radius: 8px;
+    text-align: center;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+  
+  .purchase-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  #pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .pagination-button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .pagination-button:hover {
+    background-color: #e8e8e8;
+  }
+  
+  .pagination-button.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+  
+  .pagination-button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }

@@ -1,0 +1,19 @@
+@media screen and (max-width: 768px) {
+    .purchases-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .purchase-actions {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .action-button {
+      width: 100%;
+    }
+  
+    .modal-content {
+      width: 95%;
+      margin: 5% auto;
+    }
+  }
