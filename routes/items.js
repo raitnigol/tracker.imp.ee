@@ -5,64 +5,93 @@ function itemsRouter(db) {
 
   // Prepare statements
   const insertItem = db.prepare('INSERT INTO items (purchase_id, type, platform, name, status, soldFor) VALUES (?, ?, ?, ?, ?, ?)');
+  const getItem = db.prepare('SELECT * FROM items WHERE id = ? AND purchase_id = ?');
+  const updateItem = db.prepare(`
+    UPDATE items 
+    SET name = COALESCE(?, name), 
+        type = COALESCE(?, type), 
+        platform = COALESCE(?, platform), 
+        status = COALESCE(?, status), 
+        soldFor = COALESCE(?, soldFor) 
+    WHERE id = ? AND purchase_id = ?
+  `);
+  const deleteItem = db.prepare('DELETE FROM items WHERE id = ? AND purchase_id = ?');
 
+  // POST: Add a new item
   router.post('/:id/items', (req, res) => {
     const { id } = req.params;
     const { type, platform, name, status, soldFor } = req.body;
-    const result = insertItem.run(id, type, platform, name, status, soldFor);
-    res.json({ id: result.lastInsertRowid, purchase_id: id, type, platform, name, status, soldFor });
-  });
-
-  router.delete('/:purchaseId/items/:itemId', (req, res) => {
-    const { purchaseId, itemId } = req.params;
-    const deleteItem = db.prepare('DELETE FROM items WHERE id = ? AND purchase_id = ?');
-    const result = deleteItem.run(itemId, purchaseId);
-    if (result.changes > 0) {
-      res.json({ message: 'Item deleted' });
-    } else {
-      res.status(404).json({ message: 'Item not found' });
+    try {
+      const result = insertItem.run(id, type, platform, name, status, soldFor);
+      res.json({ id: result.lastInsertRowid, purchase_id: id, type, platform, name, status, soldFor });
+    } catch (error) {
+      console.error('Error inserting item:', error);
+      res.status(500).json({ message: 'Failed to insert item', error: error.message });
     }
   });
 
-  router.put('/:purchaseId/items/:itemId', (req, res) => {
+  // GET: Retrieve an item
+  router.get('/:purchaseId/items/:itemId', (req, res) => {
+    const { purchaseId, itemId } = req.params;
+    try {
+      const item = getItem.get(itemId, purchaseId);
+      if (item) {
+        res.json(item);
+      } else {
+        res.status(404).json({ message: 'Item not found' });
+      }
+    } catch (error) {
+      console.error('Error retrieving item:', error);
+      res.status(500).json({ message: 'Failed to retrieve item', error: error.message });
+    }
+  });
+
+  // PATCH: Update an item
+  router.patch('/:purchaseId/items/:itemId', (req, res) => {
     const { purchaseId, itemId } = req.params;
     const { name, type, platform, status, soldFor } = req.body;
     
-    // First, get the current item data
-    const getCurrentItem = db.prepare('SELECT * FROM items WHERE id = ? AND purchase_id = ?');
-    const currentItem = getCurrentItem.get(itemId, purchaseId);
+    try {
+      const currentItem = getItem.get(itemId, purchaseId);
+      if (!currentItem) {
+        return res.status(404).json({ message: 'Item not found' });
+      }
 
-    if (!currentItem) {
-      return res.status(404).json({ message: 'Item not found' });
+      const result = updateItem.run(
+        name || null,
+        type || null,
+        platform || null,
+        status || null,
+        soldFor !== undefined ? soldFor : null,
+        itemId,
+        purchaseId
+      );
+
+      if (result.changes > 0) {
+        const updatedItem = getItem.get(itemId, purchaseId);
+        res.json(updatedItem);
+      } else {
+        res.status(500).json({ message: 'Failed to update item' });
+      }
+    } catch (error) {
+      console.error('Error updating item:', error);
+      res.status(500).json({ message: 'Failed to update item', error: error.message });
     }
+  });
 
-    // Use current values if not provided in the update
-    const updateItem = db.prepare(`
-      UPDATE items 
-      SET name = COALESCE(?, name), 
-          type = COALESCE(?, type), 
-          platform = COALESCE(?, platform), 
-          status = COALESCE(?, status), 
-          soldFor = COALESCE(?, soldFor) 
-      WHERE id = ? AND purchase_id = ?
-    `);
-
-    const result = updateItem.run(
-      name || null,
-      type || null,
-      platform || null,
-      status || null,
-      soldFor !== undefined ? soldFor : null,
-      itemId,
-      purchaseId
-    );
-
-    if (result.changes > 0) {
-      const getUpdatedItem = db.prepare('SELECT * FROM items WHERE id = ?');
-      const updatedItem = getUpdatedItem.get(itemId);
-      res.json(updatedItem);
-    } else {
-      res.status(500).json({ message: 'Failed to update item' });
+  // DELETE: Remove an item
+  router.delete('/:purchaseId/items/:itemId', (req, res) => {
+    const { purchaseId, itemId } = req.params;
+    try {
+      const result = deleteItem.run(itemId, purchaseId);
+      if (result.changes > 0) {
+        res.json({ message: 'Item deleted' });
+      } else {
+        res.status(404).json({ message: 'Item not found' });
+      }
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      res.status(500).json({ message: 'Failed to delete item', error: error.message });
     }
   });
 
@@ -70,3 +99,4 @@ function itemsRouter(db) {
 }
 
 module.exports = itemsRouter;
+

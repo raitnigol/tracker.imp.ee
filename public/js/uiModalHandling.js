@@ -6,6 +6,10 @@ export function openModal(modalId) {
     setTimeout(() => {
       modal.classList.add('show');
     }, 10);
+
+    if (modalId === 'mark-as-sold-modal') {
+      document.getElementById('sold-for-price').value = '';
+    }
   }
   
   export function closeModal(modalId) {
@@ -24,7 +28,7 @@ export function openModal(modalId) {
     updatePurchaseSummary(purchase, purchaseSummary);
     updateItemsList(purchase, itemsList);
   
-    openModal('view-items-modal');
+    openModal('view-items-modal');  // This should now use the imported function
   }
   
   function updatePurchaseSummary(purchase, purchaseSummary) {
@@ -45,6 +49,7 @@ export function openModal(modalId) {
     if (purchase.items && purchase.items.length > 0) {
       purchase.items.forEach((item) => {
         const li = document.createElement('li');
+        li.dataset.purchaseId = purchase.id;  // Add this line
         li.innerHTML = `
           <div class="item-info">
             <div class="item-name">${item.name}</div>
@@ -98,25 +103,6 @@ export function openModal(modalId) {
     }
     setupItemSearch();
   }
-  
-  function createItemListElement(item) {
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <div class="item-info">
-        <p><strong>Platform:</strong> ${item.platform}</p>
-        <p><strong>${item.type.charAt(0).toUpperCase() + item.type.slice(1)}:</strong> ${item.name}</p>
-        <p>${item.status === 'Sold' 
-          ? `The ${item.type} sold for ${item.soldFor.toFixed(2)} €` 
-          : `The ${item.type} is currently unsold.`}</p>
-      </div>
-      <div class="item-actions">
-        <button class="action-button mark-sold" data-item-id="${item.id}">${item.status === 'Sold' ? 'Update Sale' : 'Mark as Sold'}</button>
-        <button class="action-button mark-unsold" data-item-id="${item.id}">Mark as Unsold</button>
-        <button class="action-button delete-item" data-item-id="${item.id}">Delete</button>
-      </div>
-    `;
-    return li;
-  }
 
   function setupItemSearch() {
     const searchInput = document.getElementById('items-search-input');
@@ -132,3 +118,4 @@ export function openModal(modalId) {
 
   // Call this function after populating the items list
   setupItemSearch();
+

@@ -106,3 +106,17 @@ function createPlaceholderCard() {
   return card;
 }
 
+function createItemElement(item, purchaseId) {
+  // ... existing code ...
+
+  if (item.status !== 'Sold') {
+    const markAsSoldBtn = document.createElement('button');
+    markAsSoldBtn.textContent = 'Mark as Sold';
+    markAsSoldBtn.className = 'action-button secondary mark-as-sold-btn';
+    markAsSoldBtn.dataset.itemId = item.id;
+    markAsSoldBtn.dataset.purchaseId = purchaseId;
+    itemActions.appendChild(markAsSoldBtn);
+  }
+
+  // ... rest of the function ...
+}

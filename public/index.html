@@ -136,7 +136,27 @@
             </div>
           </div>
         </div>
-
+        <!-- Add this near your other modals -->
+        <div id="mark-as-sold-modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>Mark Item as Sold</h2>
+              <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+              <form id="mark-as-sold-form">
+                <div class="form-row">
+                  <label for="sold-for-price">Sold For (EUR):</label>
+                  <input type="number" id="sold-for-price" step="0.01" required>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="action-button secondary" id="cancel-mark-as-sold">Cancel</button>
+              <button type="submit" form="mark-as-sold-form" class="action-button primary">Confirm</button>
+            </div>
+          </div>
+        </div>
         <!-- Modal for Delete Confirmation -->
         <div id="delete-confirm-modal" class="modal">
           <div class="modal-content">
