@@ -11,7 +11,7 @@ async function initializeApp() {
       console.log('Setting up event listeners');
       setupEventListeners();
       console.log('Setting up logout');
-      setupLogout(); // Add this line
+      setupLogout();
       console.log('Displaying username');
       displayUsername();
       console.log('Fetching purchases');
@@ -26,10 +26,15 @@ async function initializeApp() {
     }
   } catch (error) {
     console.error('Error initializing app:', error);
-    alert('An error occurred while initializing the app. Please try refreshing the page.');
+    hideLoading();
+    document.body.innerHTML += '<p>An error occurred while initializing the app. Please try refreshing the page.</p>';
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  initializeApp();
+  initializeApp().catch(error => {
+    console.error('Unhandled error during app initialization:', error);
+    hideLoading();
+    document.body.innerHTML += '<p>An unexpected error occurred. Please try refreshing the page.</p>';
+  });
 });

@@ -1,5 +1,6 @@
 import { fetchWithAuth } from './auth.js';
-import { displayPurchases, closeModal, updatePaginationAfterDelete, setCurrentPage } from './ui.js';
+import { displayPurchases, closeModal } from './ui.js';
+import { setCurrentPage, updatePaginationAfterDelete } from './pagination.js';
 
 export let purchases = [];
 let currentPurchase = null;
