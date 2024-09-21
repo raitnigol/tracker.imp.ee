@@ -10,31 +10,11 @@
   <link rel="stylesheet" href="/css/components.css">
   <link rel="stylesheet" href="/css/utilities.css">
   <link rel="stylesheet" href="/css/responsive.css">
-  <style>
-    .login-page {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f0f0f0;
-    }
-    .login-container {
-      background-color: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 400px;
-    }
-    .login-container h1 {
-      text-align: center;
-      color: var(--primary-color);
-      margin-bottom: 1.5rem;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/login.css">
 </head>
-<body class="login-page">
-  <div class="login-container">
+<body>
+  <div class="login-container" style="display: none;">
     <h1>Nigol's Purchase Tracker</h1>
     <form id="login-form">
       <div class="input-group">
@@ -47,6 +27,7 @@
       </div>
       <button type="submit">Log In</button>
     </form>
+    <div id="debug-info"></div>
   </div>
   <script src="/js/login.js"></script>
 </body>
