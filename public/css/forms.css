@@ -21,3 +21,27 @@ input, select {
     margin-bottom: 5px;
     font-weight: 500;
   }
+
+@media screen and (max-width: 768px) {
+  input, select {
+    font-size: 16px; /* Prevents zoom on focus in iOS */
+  }
+
+  .form-row {
+    margin-bottom: 15px;
+  }
+}
+
+@media screen and (max-width: 844px) {
+  input, select {
+    font-size: 16px;
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+
+  .form-row label {
+    font-size: 0.9em;
+    margin-bottom: 3px;
+  }
+}
+

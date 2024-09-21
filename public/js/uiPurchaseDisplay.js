@@ -32,7 +32,7 @@ export function displayPurchases() {
 
 function createPurchaseCard(purchase, profit) {
   const card = document.createElement('div');
-  card.className = 'purchase-card';
+  card.className = 'purchase-card'; // Remove profit-based class
 
   const header = document.createElement('div');
   header.className = 'purchase-header';
@@ -46,7 +46,7 @@ function createPurchaseCard(purchase, profit) {
   `;
 
   const profitElement = document.createElement('div');
-  profitElement.className = `purchase-profit ${profit >= 0 ? 'profit-positive' : 'profit-negative'}`;
+  profitElement.className = `purchase-profit ${profit >= 0 ? 'positive' : 'negative'}`;
   profitElement.textContent = `Profit: ${profit.toFixed(2)} €`;
 
   const actions = document.createElement('div');
@@ -105,3 +105,4 @@ function createPlaceholderCard() {
   card.textContent = 'No purchase';
   return card;
 }
+
