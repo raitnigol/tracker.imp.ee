@@ -1,2 +1,2 @@
-fully operational node.js tracking website (personal project) written entirely by GPT-4
+Fully operational Node.js Purchase Tracking website written entirely by claude-3.5-sonnet (fuck GPT)
 
