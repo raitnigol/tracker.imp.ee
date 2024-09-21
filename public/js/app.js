@@ -27,6 +27,7 @@ async function initializeApp() {
   } catch (error) {
     console.error('Error initializing app:', error);
     hideLoading();
+    showAppContent();  // Add this line to show content even if there's an error
     document.body.innerHTML += '<p>An error occurred while initializing the app. Please try refreshing the page.</p>';
   }
 }
@@ -35,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeApp().catch(error => {
     console.error('Unhandled error during app initialization:', error);
     hideLoading();
+    showAppContent();  // Add this line to show content even if there's an unhandled error
     document.body.innerHTML += '<p>An unexpected error occurred. Please try refreshing the page.</p>';
   });
 });

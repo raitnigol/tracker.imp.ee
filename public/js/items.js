@@ -1,6 +1,7 @@
 import { fetchWithAuth } from './auth.js';
 import { fetchPurchases, getCurrentPurchase, setCurrentPurchase } from './purchases.js';
-import { closeModal, openViewItemsModal, displayPurchases } from './ui.js';
+import { closeModal, displayPurchases } from './ui.js';
+import { openViewItemsModal } from './uiModalHandling.js';  // Add this line
 
 export async function handleItemSubmit(e) {
   e.preventDefault();
@@ -109,3 +110,4 @@ export async function deleteItem(itemId) {
     }
   }
 }
+
