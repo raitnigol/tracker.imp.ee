@@ -89,9 +89,9 @@ function calculateTotalProfit() {
 }
 
 function updateTotalProfitDisplay(totalProfit) {
-  const totalProfitElement = document.getElementById('total-profit');
-  const profitClass = totalProfit >= 0 ? 'profit' : 'loss';
-  totalProfitElement.innerHTML = `Total Profit: <span class="${profitClass}">${totalProfit.toFixed(2)} €</span>`;
+  const profitElement = document.getElementById('profit-amount');
+  profitElement.textContent = `${totalProfit.toFixed(2)} €`;
+  profitElement.className = 'profit-amount ' + (totalProfit >= 0 ? 'positive' : 'negative');
 }
 
 export function openDeleteConfirmModal(purchase) {

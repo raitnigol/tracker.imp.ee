@@ -1,127 +1,224 @@
 .modal {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
+    overflow: hidden;
     background-color: rgba(0,0,0,0.4);
     opacity: 0;
     transition: opacity 0.3s ease;
-  }
-  
-  .modal-content {
-    background-color: #fefefe;
-    margin: 10% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 500px;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    transform: translateY(-50px);
-    transition: transform 0.3s ease;
-  }
-  
-  #delete-confirm-modal .modal-content {
-    max-width: 400px;
-  }
-  
-  #item-modal .modal-content,
-  #view-items-modal .modal-content {
-    max-width: 600px;
-  }
-  
-  .modal.show {
+}
+
+.modal.show {
     opacity: 1;
-  }
-  
-  .modal.show .modal-content {
-    transform: translateY(0);
-  }
-  
-  .modal-body {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 10px;
-  }
-  
-  .modal-content h2 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
-  
-  .modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
-  }
-  
-  .modal-actions button {
-    margin-left: 10px;
-  }
-  
-  #items-list {
-    max-height: 300px;
-    overflow-y: auto;
-    padding-left: 0;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 80%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow: auto;
+    
+    /* Positioning */
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    
+    /* Animation */
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.modal.show .modal-content {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { 
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to { 
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* Add these lines for vertical centering */
+position: relative;
+top: 50%;
+transform: translateY(-50%);
+
+/* Styles for the items list in the View Items modal */
+#items-list {
     list-style-type: none;
-  }
-  
-  #items-list li {
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-  
-  .item-info p {
-    margin: 5px 0;
-  }
-  
-  .item-actions {
-    margin-top: 10px;
-  }
-  
-  .item-actions button {
-    margin-right: 5px;
-  }
-  
-  #purchase-summary {
-    background-color: #e0f2e0;
-    padding: 15px;
+    padding: 0;
+    margin: 0;
+}
+
+#items-list li {
+    background-color: #f8f8f8;
     border-radius: 8px;
-    margin-bottom: 20px;
-  }
-  
-  #purchase-summary h3 {
-    margin-top: 0;
-    color: var(--primary-color);
-  }
-  
-  #purchase-summary p {
-    margin: 5px 0;
-  }
-  
-  .modal-content::-webkit-scrollbar,
-  .modal-body::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  .modal-content::-webkit-scrollbar-track,
-  .modal-body::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-  
-  .modal-content::-webkit-scrollbar-thumb,
-  .modal-body::-webkit-scrollbar-thumb {
-    background: #888;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 10px;
+    align-items: center;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+#items-list li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+#items-list li:last-child {
+    margin-bottom: 0;
+}
+
+.item-info {
+    grid-column: 1 / 2;
+    grid-row: 1 / 3;
+}
+
+.item-name {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+.item-details, .item-status {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.item-actions {
+    grid-column: 2 / 3;
+    grid-row: 1 / 3;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: center;
+}
+
+.item-actions button {
+    width: 120px;
+    padding: 8px 0;
+    font-size: 0.9em;
+    text-align: center;
+}
+
+/* Styles for the form in the Add Item modal */
+#item-form .form-row {
+    margin-bottom: 15px;
+}
+
+#item-form label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--color-text-light);
+}
+
+#item-form input,
+#item-form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
     border-radius: 4px;
-  }
-  
-  .modal-content::-webkit-scrollbar-thumb:hover,
-  .modal-body::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
+    font-size: 16px;
+}
+
+#item-form input:focus,
+#item-form select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* Responsive design for smaller screens */
+@media screen and (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+        padding: 20px;
+    }
+}
+
+#view-items-modal .modal-content {
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#view-items-modal .modal-body {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 15px; /* Add some padding to account for the scrollbar */
+}
+
+#items-list .item-info {
+    flex-grow: 1;
+}
+
+#items-list .item-actions {
+    display: flex;
+    gap: 10px;
+}
+
+#items-list .item-actions button {
+    padding: 5px 10px;
+    font-size: 0.9em;
+}
+
+#view-items-modal .modal-body::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0));
+    pointer-events: none;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}

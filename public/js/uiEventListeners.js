@@ -1,3 +1,4 @@
+import { updateItem } from './items.js';
 import { handlePurchaseSubmit, deletePurchase } from './purchases.js';
 import { handleItemSubmit, markAsSold, markAsUnsold, deleteItem } from './items.js';
 import { closeModal, openModal } from './uiModalHandling.js';
@@ -24,6 +25,12 @@ export function setupEventListeners() {
       markAsUnsold(e.target.getAttribute('data-item-id'));
     } else if (e.target.classList.contains('delete-item')) {
       deleteItem(e.target.getAttribute('data-item-id'));
+    } else if (e.target.classList.contains('save-quick-edit')) {
+      const itemId = e.target.getAttribute('data-item-id');
+      const newName = e.target.parentElement.querySelector('.quick-edit-name').value;
+      const newType = e.target.parentElement.querySelector('.quick-edit-type').value;
+      const newPlatform = e.target.parentElement.querySelector('.quick-edit-platform').value;
+      updateItem(itemId, { name: newName, type: newType, platform: newPlatform });
     }
   });
 
@@ -34,4 +41,6 @@ export function setupEventListeners() {
     handlePurchaseSubmit(e);
     closeModal('add-purchase-modal');
   });
+
+  document.getElementById('cancel-add-item').addEventListener('click', () => closeModal('item-modal'));
 }

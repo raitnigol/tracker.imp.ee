@@ -26,15 +26,43 @@ function itemsRouter(db) {
 
   router.put('/:purchaseId/items/:itemId', (req, res) => {
     const { purchaseId, itemId } = req.params;
-    const { status, soldFor } = req.body;
-    const updateItem = db.prepare('UPDATE items SET status = ?, soldFor = ? WHERE id = ? AND purchase_id = ?');
-    const result = updateItem.run(status, soldFor, itemId, purchaseId);
+    const { name, type, platform, status, soldFor } = req.body;
+    
+    // First, get the current item data
+    const getCurrentItem = db.prepare('SELECT * FROM items WHERE id = ? AND purchase_id = ?');
+    const currentItem = getCurrentItem.get(itemId, purchaseId);
+
+    if (!currentItem) {
+      return res.status(404).json({ message: 'Item not found' });
+    }
+
+    // Use current values if not provided in the update
+    const updateItem = db.prepare(`
+      UPDATE items 
+      SET name = COALESCE(?, name), 
+          type = COALESCE(?, type), 
+          platform = COALESCE(?, platform), 
+          status = COALESCE(?, status), 
+          soldFor = COALESCE(?, soldFor) 
+      WHERE id = ? AND purchase_id = ?
+    `);
+
+    const result = updateItem.run(
+      name || null,
+      type || null,
+      platform || null,
+      status || null,
+      soldFor !== undefined ? soldFor : null,
+      itemId,
+      purchaseId
+    );
+
     if (result.changes > 0) {
       const getUpdatedItem = db.prepare('SELECT * FROM items WHERE id = ?');
       const updatedItem = getUpdatedItem.get(itemId);
       res.json(updatedItem);
     } else {
-      res.status(404).json({ message: 'Item not found' });
+      res.status(500).json({ message: 'Failed to update item' });
     }
   });
 

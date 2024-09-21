@@ -31,26 +31,66 @@ export async function handleItemSubmit(e) {
   const newItem = await response.json();
   currentPurchase.items.push(newItem);
   await updatePurchaseAndDisplay();
-  closeModal();
+  closeModal('item-modal');
   document.getElementById('item-form').reset();
+  
+  // Show a temporary "Add Another" button
+  const addAnotherBtn = document.createElement('button');
+  addAnotherBtn.textContent = 'Add Another Item';
+  addAnotherBtn.className = 'action-button secondary';
+  addAnotherBtn.style.position = 'fixed';
+  addAnotherBtn.style.bottom = '20px';
+  addAnotherBtn.style.right = '20px';
+  addAnotherBtn.addEventListener('click', () => {
+    document.body.removeChild(addAnotherBtn);
+    openModal('item-modal');
+  });
+  document.body.appendChild(addAnotherBtn);
+  
+  // Remove the "Add Another" button after 5 seconds
+  setTimeout(() => {
+    if (document.body.contains(addAnotherBtn)) {
+      document.body.removeChild(addAnotherBtn);
+    }
+  }, 5000);
 }
 
 async function updatePurchaseAndDisplay() {
   await fetchPurchases();
   displayPurchases();
+  const currentPurchase = getCurrentPurchase();
+  if (currentPurchase) {
+    openViewItemsModal(currentPurchase);
+  }
 }
 
 export async function markAsSold(itemId) {
-  const soldFor = prompt('Enter the selling price:');
-  if (soldFor === null || soldFor === '') return;
-
   const currentPurchase = getCurrentPurchase();
+  const item = currentPurchase.items.find(item => item.id == itemId);
+  
+  if (!item) {
+    console.error('Item not found');
+    return;
+  }
+
+  const soldFor = prompt('Enter the selling price:', '0');
+  if (soldFor === null) return; // User cancelled the prompt
+
   try {
     const response = await fetchWithAuth(`/api/purchases/${currentPurchase.id}/items/${itemId}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'Sold', soldFor: parseFloat(soldFor) }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: item.name,
+        type: item.type,
+        platform: item.platform,
+        status: 'Sold',
+        soldFor: parseFloat(soldFor)
+      }),
     });
+
     if (response.ok) {
       const updatedItem = await response.json();
       const itemIndex = currentPurchase.items.findIndex(item => item.id == itemId);
@@ -108,6 +148,44 @@ export async function deleteItem(itemId) {
     } catch (error) {
       console.error('Error deleting item:', error);
     }
+  }
+}
+
+export async function updateItem(itemId, updates) {
+  try {
+    const currentPurchase = getCurrentPurchase();
+    console.log('Sending update request:', updates);
+    const response = await fetchWithAuth(`/api/purchases/${currentPurchase.id}/items/${itemId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: updates.name,
+        type: updates.type,
+        platform: updates.platform,
+        status: updates.status || 'Unsold',
+        soldFor: updates.soldFor || 0
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to update item: ${response.status} ${response.statusText}. ${errorText}`);
+    }
+
+    const updatedItem = await response.json();
+    console.log('Received updated item:', updatedItem);
+
+    const itemIndex = currentPurchase.items.findIndex(item => item.id == itemId);
+    if (itemIndex !== -1) {
+      currentPurchase.items[itemIndex] = updatedItem;
+    }
+    await updatePurchaseAndDisplay();
+    openViewItemsModal(currentPurchase);
+  } catch (error) {
+    console.error('Error updating item:', error);
+    alert(`Failed to update item: ${error.message}`);
   }
 }
 
