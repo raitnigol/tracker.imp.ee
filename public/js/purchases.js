@@ -56,6 +56,7 @@ export async function handlePurchaseSubmit(e) {
     purchases.push(newPurchase);
     displayPurchases();
     document.getElementById('purchase-form').reset();
+    closeModal('add-purchase-modal');
   } catch (error) {
     console.error('Error adding purchase:', error);
     alert('Failed to add purchase. Please try again.');

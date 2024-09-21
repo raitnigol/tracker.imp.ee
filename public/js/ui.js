@@ -29,6 +29,14 @@ export function setupEventListeners() {
       deleteItem(e.target.getAttribute('data-item-id'));
     }
   });
+
+  document.getElementById('add-purchase-btn').addEventListener('click', () => openModal('add-purchase-modal'));
+  document.getElementById('cancel-add-purchase').addEventListener('click', () => closeModal('add-purchase-modal'));
+  document.getElementById('purchase-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    handlePurchaseSubmit(e);
+    closeModal('add-purchase-modal');
+  });
 }
 
 export function displayPurchases() {
