@@ -1,4 +1,4 @@
-import { checkAuthAndInitialize } from './auth.js';
+import { checkAuthAndInitialize, setupLogout } from './auth.js';
 import { setupEventListeners, displayPurchases, hideLoading, showAppContent, displayUsername } from './ui.js';
 import { fetchPurchases } from './purchases.js';
 
@@ -10,6 +10,8 @@ async function initializeApp() {
     if (isAuthenticated) {
       console.log('Setting up event listeners');
       setupEventListeners();
+      console.log('Setting up logout');
+      setupLogout(); // Add this line
       console.log('Displaying username');
       displayUsername();
       console.log('Fetching purchases');

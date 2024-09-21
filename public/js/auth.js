@@ -27,11 +27,13 @@ export async function checkAuthAndInitialize() {
   }
 }
 
+export function logout() {
+  localStorage.removeItem('token');
+  window.location.href = '/login';
+}
+
 export function setupLogout() {
-  document.getElementById('logout-button').addEventListener('click', () => {
-    localStorage.removeItem('token');
-    window.location.href = '/login';
-  });
+  document.getElementById('logout-button').addEventListener('click', logout);
 }
 
 export async function fetchWithAuth(url, options = {}) {
