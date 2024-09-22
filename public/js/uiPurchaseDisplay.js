@@ -186,3 +186,19 @@ export function updateTotalProfit() {
   }
 }
 
+export function updatePurchaseCard(purchase) {
+  const profit = calculateProfit(purchase);
+  const card = document.querySelector(`.purchase-card[data-purchase-id="${purchase.id}"]`);
+  if (card) {
+    const profitElement = card.querySelector('.purchase-profit');
+    if (profitElement) {
+      profitElement.className = `purchase-profit ${profit >= 0 ? 'positive' : 'negative'}`;
+      profitElement.textContent = `Profit: ${profit.toFixed(2)} €`;
+    }
+    const itemsCountElement = card.querySelector('.purchase-info p:nth-child(2)');
+    if (itemsCountElement) {
+      itemsCountElement.textContent = `Items: ${purchase.items.length}`;
+    }
+  }
+}
+

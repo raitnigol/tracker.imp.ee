@@ -183,6 +183,14 @@ export function setupEventListeners() {
     });
   }
 
+  // Add event listener for the cancel button in the "Mark as Sold" modal
+  const cancelMarkAsSoldBtn = document.getElementById('cancel-mark-as-sold');
+  if (cancelMarkAsSoldBtn) {
+    cancelMarkAsSoldBtn.addEventListener('click', () => {
+      closeModal('mark-as-sold-modal');
+    });
+  }
+
   const addPurchaseModal = document.getElementById('add-purchase-modal');
   if (addPurchaseModal) {
     const cancelButton = addPurchaseModal.querySelector('#purchase-cancel');

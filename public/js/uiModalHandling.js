@@ -15,10 +15,12 @@ export function openModal(modalId) {
   
   export function closeModal(modalId) {
     const modal = document.getElementById(modalId);
-    modal.classList.remove('show');
-    setTimeout(() => {
-      modal.style.display = 'none';
-    }, 300);
+    if (modal) {
+      modal.classList.remove('show');
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 300);
+    }
   }
   
   export function openViewItemsModal(purchase) {
@@ -78,4 +80,13 @@ export function openModal(modalId) {
 
   // Call this function after populating the items list
   setupItemSearch();
+
+  export function updateViewItemsModalProfit(purchase) {
+    const modalProfitElement = document.querySelector('#view-items-modal .modal-profit');
+    if (modalProfitElement) {
+      const profit = calculateProfit(purchase);
+      modalProfitElement.textContent = `Profit: ${profit.toFixed(2)} €`;
+      modalProfitElement.className = `modal-profit ${profit >= 0 ? 'positive' : 'negative'}`;
+    }
+  }
 

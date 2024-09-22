@@ -4,6 +4,8 @@ import { closeModal, displayPurchases } from './ui.js';
 import { openViewItemsModal } from './uiModalHandling.js';
 import { updatePurchaseProfit } from './uiEventListeners.js';
 import { updateTotalProfit } from './uiPurchaseDisplay.js';
+import { updatePurchaseCard } from './uiPurchaseDisplay.js';
+import { updateViewItemsModalProfit } from './uiModalHandling.js';
 
 export async function handleItemSubmit(e) {
   console.log('Handling item submit');
@@ -108,13 +110,14 @@ export async function markAsSold(itemId, purchaseId, soldFor) {
       const item = purchase.items.find(i => i.id === parseInt(itemId));
       if (item) {
         item.status = 'Sold';
-        item.soldFor = soldFor;
+        item.soldFor = parseFloat(soldFor);
       }
     }
 
     // Update UI
     updateItemUIInModal(itemId, updatedItem);
-    updatePurchaseProfit(purchaseId);
+    updatePurchaseCard(purchase);
+    updateViewItemsModalProfit(purchase);
     updateTotalProfit();
 
     return updatedItem;
@@ -186,7 +189,8 @@ export async function markAsUnsold(itemId, purchaseId) {
 
     // Update UI
     updateItemUIInModal(itemId, updatedItem);
-    updatePurchaseProfit(purchaseId);
+    updatePurchaseCard(purchase);
+    updateViewItemsModalProfit(purchase);
     updateTotalProfit();
 
     return updatedItem;
