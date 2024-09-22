@@ -1,7 +1,8 @@
-import { purchases, setCurrentPurchase, setPurchaseToDelete } from './purchases.js';
 import { calculateProfit } from './utils.js';
-import { updatePagination, itemsPerPage, getCurrentPage } from './pagination.js';
-import { openModal, openViewItemsModal } from './uiModalHandling.js';
+import { purchases, setPurchaseToDelete, setCurrentPurchase } from './purchases.js';
+import { openModal } from './uiModalHandling.js';
+import { openViewItemsModal } from './uiItemsModal.js';
+import { updatePagination, getCurrentPage, itemsPerPage } from './pagination.js';
 
 export function displayPurchases() {
   console.log('Displaying purchases. Total purchases:', purchases.length);
@@ -109,59 +110,27 @@ function createPlaceholderCard() {
 }
 
 export function createItemElement(item, purchaseId) {
-  const itemElement = document.createElement('li');
+  const itemElement = document.createElement('div');
+  itemElement.className = 'item-card';
   itemElement.dataset.itemId = item.id;
-  itemElement.dataset.purchaseId = purchaseId;
-  itemElement.dataset.status = item.status;
+  itemElement.dataset.purchaseId = purchaseId;  // Add this line
 
-  const itemInfo = document.createElement('div');
-  itemInfo.className = 'item-info';
-
-  const itemDetails = document.createElement('div');
-  itemDetails.className = 'item-details';
-  itemDetails.innerHTML = `
-    <span class="item-name">${item.name}</span>
-    <span class="item-type">${item.type}</span>
-    <span class="item-platform">${item.platform}</span>
-    <span class="item-status">
-      <i class="fas ${item.status === 'Sold' ? 'fa-check-circle' : 'fa-clock'}"></i>
-      Status: ${item.status}
-    </span>
+  itemElement.innerHTML = `
+    <div class="item-info">
+      <h4>${item.name}</h4>
+      <p>Type: ${item.type}</p>
+      <p>Platform: ${item.platform}</p>
+      <p class="item-status">Status: ${item.status || 'Unsold'}</p>
+      ${item.soldFor ? `<p>Sold for: ${item.soldFor} €</p>` : ''}
+    </div>
+    <div class="item-actions">
+      <button class="action-button ${item.status === 'Sold' ? 'secondary mark-unsold' : 'primary mark-sold'}" data-item-id="${item.id}" data-purchase-id="${purchaseId}">
+        ${item.status === 'Sold' ? 'Mark as Unsold' : 'Mark as Sold'}
+      </button>
+      <button class="action-button secondary edit-item" data-item-id="${item.id}" data-purchase-id="${purchaseId}">Edit</button>
+      <button class="action-button delete delete-item-btn" data-item-id="${item.id}" data-purchase-id="${purchaseId}">Delete</button>
+    </div>
   `;
-
-  if (item.status === 'Sold') {
-    const soldForElement = document.createElement('span');
-    soldForElement.className = 'item-sold-for';
-    soldForElement.textContent = `Sold for: ${item.soldFor.toFixed(2)} €`;
-    itemDetails.appendChild(soldForElement);
-  }
-
-  itemInfo.appendChild(itemDetails);
-
-  const itemActions = document.createElement('div');
-  itemActions.className = 'item-actions';
-
-  const actionButton = document.createElement('button');
-  actionButton.textContent = item.status === 'Sold' ? 'Mark as Unsold' : 'Mark as Sold';
-  actionButton.className = `action-button ${item.status === 'Sold' ? 'secondary mark-unsold' : 'primary mark-sold'}`;
-  actionButton.dataset.itemId = item.id;
-
-  const editItemBtn = document.createElement('button');
-  editItemBtn.textContent = 'Edit';
-  editItemBtn.className = 'action-button secondary edit-item';
-  editItemBtn.dataset.itemId = item.id;
-
-  const deleteItemBtn = document.createElement('button');
-  deleteItemBtn.textContent = 'Delete';
-  deleteItemBtn.className = 'action-button delete delete-item-btn';
-  deleteItemBtn.dataset.itemId = item.id;
-
-  itemActions.appendChild(actionButton);
-  itemActions.appendChild(editItemBtn);
-  itemActions.appendChild(deleteItemBtn);
-
-  itemElement.appendChild(itemInfo);
-  itemElement.appendChild(itemActions);
 
   return itemElement;
 }
@@ -201,4 +170,17 @@ export function updatePurchaseCard(purchase) {
     }
   }
 }
+
+export function updatePurchaseProfit(purchase) {
+  const profit = calculateProfit(purchase);
+  const purchaseCard = document.querySelector(`[data-purchase-id="${purchase.id}"]`);
+  if (purchaseCard) {
+    const profitElement = purchaseCard.querySelector('.purchase-profit');
+    if (profitElement) {
+      profitElement.textContent = `Profit: ${profit.toFixed(2)} €`;
+      profitElement.className = `purchase-profit ${profit >= 0 ? 'positive' : 'negative'}`;
+    }
+  }
+}
+
 

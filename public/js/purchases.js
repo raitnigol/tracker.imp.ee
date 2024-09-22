@@ -1,11 +1,19 @@
 import { fetchWithAuth } from './auth.js';
-import { displayPurchases, closeModal } from './ui.js';
-import { setCurrentPage, updatePaginationAfterDelete } from './pagination.js';
-import { calculateProfit } from './utils.js';
+import { displayPurchases, updateTotalProfit } from './uiPurchaseDisplay.js';
+import { updatePaginationAfterDelete } from './pagination.js';
+import { closeModal } from './uiModalHandling.js';
 
 export let purchases = [];
-let currentPurchase = null;
 let purchaseToDelete = null;
+let currentPurchase = null;
+
+export function setPurchaseToDelete(purchase) {
+  purchaseToDelete = purchase;
+}
+
+export function getPurchaseToDelete() {
+  return purchaseToDelete;
+}
 
 export function setCurrentPurchase(purchase) {
   currentPurchase = purchase;
@@ -15,94 +23,107 @@ export function getCurrentPurchase() {
   return currentPurchase;
 }
 
-export function setPurchaseToDelete(purchase) {
-  purchaseToDelete = purchase;
-  console.log('Set purchaseToDelete:', purchaseToDelete);
-}
-
-export function getPurchaseToDelete() {
-  console.log('Get purchaseToDelete:', purchaseToDelete);
-  return purchaseToDelete;
-}
-
 export async function fetchPurchases() {
-  console.log('Fetching purchases...');
   try {
     const response = await fetchWithAuth('/api/purchases');
-    console.log('Fetch response:', response);
     if (!response.ok) {
-      throw new Error(`Failed to fetch purchases: ${response.status} ${response.statusText}`);
+      throw new Error('Failed to fetch purchases');
     }
-    const data = await response.json();
-    console.log('Fetched purchases data:', data);
-    purchases = data;
-    console.log('Updated purchases array:', purchases);
+    purchases = await response.json();
     displayPurchases();
+    updateTotalProfit();
   } catch (error) {
     console.error('Error fetching purchases:', error);
-    alert('Failed to fetch purchases. Please try refreshing the page.');
   }
 }
 
-export async function handlePurchaseSubmit(e) {
-  e.preventDefault();
-  const purchaseName = document.getElementById('purchase-name').value;
-  const purchasePrice = document.getElementById('purchase-price').value;
-
-  console.log('Submitting new purchase:', { name: purchaseName, price: purchasePrice });
-
+export async function addPurchase(purchaseData) {
   try {
     const response = await fetchWithAuth('/api/purchases', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: purchaseName, price: parseFloat(purchasePrice) }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(purchaseData),
     });
 
-    console.log('Purchase submission response:', response);
-
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Error data:', errorData);
       throw new Error(`Failed to add purchase: ${response.status} ${response.statusText}`);
     }
 
     const newPurchase = await response.json();
-    console.log('New purchase added:', newPurchase);
-
     purchases.push(newPurchase);
-    console.log('Updated purchases array:', purchases);
-
-    displayPurchases();
-    document.getElementById('purchase-form').reset();
-    closeModal('add-purchase-modal');
+    return newPurchase;
   } catch (error) {
-    console.error('Error adding purchase:', error);
-    alert('Failed to add purchase: ' + error.message);
+    console.error('Error in addPurchase:', error);
+    throw error;
+  }
+}
+
+export async function updatePurchase(updatedPurchase) {
+  try {
+    const response = await fetchWithAuth(`/api/purchases/${updatedPurchase.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedPurchase),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update purchase');
+    }
+
+    const index = purchases.findIndex(p => p.id === updatedPurchase.id);
+    if (index !== -1) {
+      purchases[index] = updatedPurchase;
+      displayPurchases();
+      updateTotalProfit();
+    }
+  } catch (error) {
+    console.error('Error updating purchase:', error);
+    throw error;
   }
 }
 
 export async function deletePurchase(purchaseId) {
-  console.log('deletePurchase called with ID:', purchaseId);
   try {
     const response = await fetchWithAuth(`/api/purchases/${purchaseId}`, {
       method: 'DELETE',
     });
 
-    console.log('Delete request sent, response status:', response.status);
-
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`Failed to delete purchase: ${response.status} ${response.statusText}. ${JSON.stringify(errorData)}`);
+      throw new Error('Failed to delete purchase');
     }
 
-    // Remove the deleted purchase from the local array
-    purchases = purchases.filter(purchase => purchase.id !== purchaseId);
-
-    console.log('Purchase deleted successfully, remaining purchases:', purchases.length);
-    return true;
+    purchases = purchases.filter(p => p.id !== purchaseId);
+    displayPurchases();
+    updateTotalProfit();
+    updatePaginationAfterDelete(purchases.length);
   } catch (error) {
-    console.error('Error in deletePurchase:', error);
+    console.error('Error deleting purchase:', error);
     throw error;
   }
 }
+
+export async function handlePurchaseSubmit(event) {
+  event.preventDefault();
+  const name = document.getElementById('purchase-name').value;
+  const price = parseFloat(document.getElementById('purchase-price').value);
+
+  if (!name || isNaN(price)) {
+    alert('Please enter a valid name and price.');
+    return;
+  }
+
+  try {
+    await addPurchase({ name, price });
+    document.getElementById('purchase-form').reset();
+    closeModal('add-purchase-modal'); // Add this line
+    displayPurchases(); // Add this line to refresh the purchases list
+  } catch (error) {
+    alert('Failed to add purchase. Please try again.');
+  }
+}
+
 

@@ -1,6 +1,7 @@
 import { setupEventListeners } from './uiEventListeners.js';
 import { displayPurchases as displayPurchasesOriginal, openDeleteConfirmModal } from './uiPurchaseDisplay.js';
-import { openModal, closeModal, openViewItemsModal } from './uiModalHandling.js';
+import { openModal, closeModal } from './uiModalHandling.js';
+import { openViewItemsModal } from './uiItemsModal.js';
 
 // Wrap the original displayPurchases function
 function wrappedDisplayPurchases() {
@@ -36,4 +37,5 @@ export {
   showAppContent,
   displayUsername
 };
+
 

@@ -38,14 +38,41 @@ export function setupLogout() {
 
 export async function fetchWithAuth(url, options = {}) {
   const token = localStorage.getItem('token');
-  const headers = {
-    ...options.headers,
-    'Authorization': `Bearer ${token}`,
-  };
-  const response = await fetch(url, { ...options, headers });
-  if (response.status === 401) {
-    localStorage.removeItem('token');
-    window.location.href = '/login';
+  if (!token) {
+    throw new Error('No authentication token found');
   }
-  return response;
+
+  const authOptions = {
+    ...options,
+    headers: {
+      ...options.headers,
+      'Authorization': `Bearer ${token}`
+    }
+  };
+
+  return fetch(url, authOptions);
 }
+
+export async function login(username, password) {
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Login failed');
+    }
+
+    const data = await response.json();
+    localStorage.setItem('token', data.token);
+    // ... rest of the login logic ...
+  } catch (error) {
+    console.error('Login error:', error);
+    throw error;
+  }
+}
+

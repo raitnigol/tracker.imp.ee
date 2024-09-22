@@ -39,18 +39,18 @@ export function changePage(page) {
   displayPurchases();
 }
 
-export function updatePaginationAfterDelete(purchasesLength) {
-  const totalPages = Math.ceil(purchasesLength / itemsPerPage);
-  if (currentPage > totalPages) {
-    setCurrentPage(Math.max(1, totalPages));
-  }
-  return currentPage;
-}
-
 export function getCurrentPage() {
   return currentPage;
 }
 
 export function setCurrentPage(page) {
   currentPage = page;
+}
+
+export function updatePaginationAfterDelete(totalItems) {
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  if (currentPage > totalPages) {
+    currentPage = totalPages > 0 ? totalPages : 1;
+  }
+  displayPurchases();
 }

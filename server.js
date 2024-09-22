@@ -41,10 +41,23 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/api/auth', authRouter(db));
+
+// Add this logging middleware before the authenticateToken middleware
+app.use('/api/purchases', (req, res, next) => {
+  console.log('Incoming request to purchases route:', {
+    method: req.method,
+    url: req.url,
+    headers: req.headers,
+    body: req.body
+  });
+  next();
+});
+
 app.use('/api/purchases', authenticateToken, (req, res, next) => {
-  console.log('Purchases route accessed:', req.method, req.url);
+  console.log('Authenticated request to purchases route:', req.method, req.url);
   next();
 }, purchasesRouter(db));
+
 app.use('/api/purchases', authenticateToken, itemsRouter(db));
 
 // Serve the login page
@@ -61,4 +74,5 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
 
