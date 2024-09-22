@@ -71,6 +71,19 @@
     padding: 10px;
     background-color: #f0f0f0;
     border-radius: 5px;
+    transition: all 0.3s ease; /* Add smooth transition */
+  }
+
+  #total-profit.positive {
+    color: var(--success-color);
+  }
+
+  #total-profit.negative {
+    color: var(--error-color);
+  }
+
+  #total-profit.neutral {
+    color: var(--color-text);
   }
   
   #add-purchase-btn {
@@ -101,6 +114,39 @@
     box-sizing: border-box;
   }
 
+  #total-profit-container {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+
+  #total-profit-container h2 {
+    color: var(--success-color);
+    margin-bottom: 0.5rem;
+  }
+
+  #total-profit-amount {
+    display: block;
+    font-size: 1.5rem;
+  }
+
+  #total-profit-amount.positive {
+    color: var(--success-color);
+  }
+
+  #total-profit-amount.negative {
+    color: var(--error-color);
+  }
+
+  #total-profit-amount.neutral {
+    color: var(--color-text);
+  }
+
 @media screen and (max-width: 768px) {
   .app-container {
     padding: 10px;
@@ -116,3 +162,4 @@
     margin-top: 10px;
   }
 }
+

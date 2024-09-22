@@ -1,7 +1,7 @@
 import { purchases, setCurrentPurchase, setPurchaseToDelete } from './purchases.js';
 import { calculateProfit } from './utils.js';
 import { updatePagination, itemsPerPage, getCurrentPage } from './pagination.js';
-import { openModal, openViewItemsModal } from './uiModalHandling.js';  // Add openViewItemsModal here
+import { openModal, openViewItemsModal } from './uiModalHandling.js';
 
 export function displayPurchases() {
   console.log('Displaying purchases. Total purchases:', purchases.length);
@@ -35,12 +35,12 @@ export function displayPurchases() {
 
   purchaseList.appendChild(purchasesGrid);
   updatePagination(getCurrentPage(), totalPages);
-  updateTotalProfitDisplay(calculateTotalProfit());
+  updateTotalProfit();
 }
 
 function createPurchaseCard(purchase, profit) {
   const card = document.createElement('div');
-  card.className = 'purchase-card'; // Remove profit-based class
+  card.className = 'purchase-card';
 
   const header = document.createElement('div');
   header.className = 'purchase-header';
@@ -70,7 +70,7 @@ function createPurchaseCard(purchase, profit) {
     openModal('item-modal');
   });
 
-  const deleteBtn = createButton('Delete', 'delete', () => openDeleteConfirmModal(purchase.id));  // Pass only the ID
+  const deleteBtn = createButton('Delete', 'delete', () => openDeleteConfirmModal(purchase.id));
 
   actions.appendChild(viewItemsBtn);
   actions.appendChild(addItemBtn);
@@ -96,12 +96,6 @@ function calculateTotalProfit() {
   return purchases.reduce((total, purchase) => total + calculateProfit(purchase), 0);
 }
 
-function updateTotalProfitDisplay(totalProfit) {
-  const profitElement = document.getElementById('profit-amount');
-  profitElement.textContent = `${totalProfit.toFixed(2)} €`;
-  profitElement.className = 'profit-amount ' + (totalProfit >= 0 ? 'positive' : 'negative');
-}
-
 export function openDeleteConfirmModal(purchaseId) {
   setPurchaseToDelete(purchaseId);
   openModal('delete-confirm-modal');
@@ -118,7 +112,7 @@ export function createItemElement(item, purchaseId) {
   const itemElement = document.createElement('li');
   itemElement.dataset.itemId = item.id;
   itemElement.dataset.purchaseId = purchaseId;
-  itemElement.dataset.status = item.status;  // Add this line
+  itemElement.dataset.status = item.status;
 
   const itemInfo = document.createElement('div');
   itemInfo.className = 'item-info';
@@ -174,10 +168,21 @@ export function createItemElement(item, purchaseId) {
 
 export function updateTotalProfit() {
   const totalProfit = calculateTotalProfit();
-  const totalProfitElement = document.getElementById('total-profit');
-  if (totalProfitElement) {
-    totalProfitElement.textContent = `Total Profit: ${totalProfit.toFixed(2)} €`;
-    totalProfitElement.className = `total-profit ${totalProfit >= 0 ? 'positive' : 'negative'}`;
+  const totalProfitAmount = document.getElementById('total-profit-amount');
+  if (totalProfitAmount) {
+    totalProfitAmount.textContent = `${totalProfit.toFixed(2)} €`;
+    
+    // Remove all existing classes
+    totalProfitAmount.className = '';
+    
+    // Add the appropriate class based on the profit value
+    if (totalProfit > 0) {
+      totalProfitAmount.classList.add('positive');
+    } else if (totalProfit < 0) {
+      totalProfitAmount.classList.add('negative');
+    } else {
+      totalProfitAmount.classList.add('neutral');
+    }
   }
 }
 
