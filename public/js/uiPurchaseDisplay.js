@@ -172,3 +172,12 @@ export function createItemElement(item, purchaseId) {
   return itemElement;
 }
 
+export function updateTotalProfit() {
+  const totalProfit = calculateTotalProfit();
+  const totalProfitElement = document.getElementById('total-profit');
+  if (totalProfitElement) {
+    totalProfitElement.textContent = `Total Profit: ${totalProfit.toFixed(2)} €`;
+    totalProfitElement.className = `total-profit ${totalProfit >= 0 ? 'positive' : 'negative'}`;
+  }
+}
+

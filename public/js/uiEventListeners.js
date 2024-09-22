@@ -4,6 +4,7 @@ import { closeModal, openModal } from './uiModalHandling.js';
 import { displayPurchases } from './uiPurchaseDisplay.js';
 import { handleItemSubmit } from './items.js';
 import { calculateProfit } from './utils.js';
+import { updateTotalProfit } from './uiPurchaseDisplay.js';
 
 let itemToMarkAsSold = null;
 
@@ -173,12 +174,6 @@ export function setupEventListeners() {
       if (itemToMarkAsSold) {
         try {
           await markAsSold(itemToMarkAsSold.itemId, itemToMarkAsSold.purchaseId, soldForPrice);
-          const listItem = document.querySelector(`li[data-item-id="${itemToMarkAsSold.itemId}"]`);
-          if (listItem) {
-            const button = listItem.querySelector('.mark-sold');
-            updateItemUI(button, 'Sold', soldForPrice);
-            updatePurchaseProfit(itemToMarkAsSold.purchaseId);
-          }
           closeModal('mark-as-sold-modal');
         } catch (error) {
           console.error('Error marking item as sold:', error);
@@ -201,7 +196,7 @@ export function setupEventListeners() {
   console.log('Event listeners set up');
 }
 
-function updateItemUI(button, newStatus, soldFor = null) {
+export function updateItemUI(button, newStatus, soldFor = null) {
   const listItem = button.closest('li');
   if (!listItem) {
     console.error('Could not find list item');
@@ -248,7 +243,7 @@ function updateItemUI(button, newStatus, soldFor = null) {
   console.log(`Item UI updated. New status: ${newStatus}, Sold for: ${soldFor}`);
 }
 
-function updateItemUIAfterEdit(itemElement, updatedItem) {
+export function updateItemUIAfterEdit(itemElement, updatedItem) {
   console.log('Updating UI for item:', updatedItem);
 
   // Update name
@@ -313,20 +308,26 @@ function updatePurchaseItemCount(purchaseId, itemId) {
   }
 }
 
-function updatePurchaseProfit(purchaseId) {
+export function updatePurchaseProfit(purchaseId) {
   const purchase = purchases.find(p => p.id === parseInt(purchaseId));
   if (purchase) {
     const profit = calculateProfit(purchase);
+    
+    // Update profit in the purchase card
     const profitElement = document.querySelector(`.purchase-card[data-purchase-id="${purchaseId}"] .purchase-profit`);
     if (profitElement) {
       profitElement.textContent = `Profit: ${profit.toFixed(2)} €`;
       profitElement.className = `purchase-profit ${profit >= 0 ? 'positive' : 'negative'}`;
     }
+    
     // Update profit in the "Items in Purchase" modal
     const modalProfitElement = document.querySelector('#view-items-modal .modal-profit');
     if (modalProfitElement) {
       modalProfitElement.textContent = `Profit: ${profit.toFixed(2)} €`;
       modalProfitElement.className = `modal-profit ${profit >= 0 ? 'positive' : 'negative'}`;
     }
+    
+    // Update total profit
+    updateTotalProfit();
   }
 }

@@ -2,6 +2,8 @@ import { fetchWithAuth } from './auth.js';
 import { purchases, getCurrentPurchase, setCurrentPurchase } from './purchases.js';
 import { closeModal, displayPurchases } from './ui.js';
 import { openViewItemsModal } from './uiModalHandling.js';
+import { updatePurchaseProfit } from './uiEventListeners.js';
+import { updateTotalProfit } from './uiPurchaseDisplay.js';
 
 export async function handleItemSubmit(e) {
   console.log('Handling item submit');
@@ -110,10 +112,53 @@ export async function markAsSold(itemId, purchaseId, soldFor) {
       }
     }
 
+    // Update UI
+    updateItemUIInModal(itemId, updatedItem);
+    updatePurchaseProfit(purchaseId);
+    updateTotalProfit();
+
     return updatedItem;
   } catch (error) {
     console.error('Error in markAsSold:', error);
     throw error;
+  }
+}
+
+function updateItemUIInModal(itemId, updatedItem) {
+  const itemElement = document.querySelector(`li[data-item-id="${itemId}"]`);
+  if (itemElement) {
+    const statusElement = itemElement.querySelector('.item-status');
+    if (statusElement) {
+      statusElement.innerHTML = `
+        <i class="fas ${updatedItem.status === 'Sold' ? 'fa-check-circle' : 'fa-clock'}"></i>
+        Status: ${updatedItem.status}
+      `;
+    }
+
+    let soldForElement = itemElement.querySelector('.item-sold-for');
+    if (updatedItem.status === 'Sold' && updatedItem.soldFor !== null) {
+      if (!soldForElement) {
+        soldForElement = document.createElement('span');
+        soldForElement.className = 'item-sold-for';
+        itemElement.querySelector('.item-details').appendChild(soldForElement);
+      }
+      soldForElement.textContent = `Sold for: ${updatedItem.soldFor.toFixed(2)} €`;
+    } else if (soldForElement) {
+      soldForElement.remove();
+    }
+
+    const actionButton = itemElement.querySelector('.action-button');
+    if (actionButton) {
+      if (updatedItem.status === 'Sold') {
+        actionButton.textContent = 'Mark as Unsold';
+        actionButton.className = 'action-button secondary mark-unsold';
+      } else {
+        actionButton.textContent = 'Mark as Sold';
+        actionButton.className = 'action-button primary mark-sold';
+      }
+    }
+
+    itemElement.dataset.status = updatedItem.status;
   }
 }
 
@@ -135,14 +180,53 @@ export async function markAsUnsold(itemId, purchaseId) {
       const item = purchase.items.find(i => i.id === parseInt(itemId));
       if (item) {
         item.status = 'Unsold';
-        delete item.soldFor;
+        item.soldFor = null; // Ensure soldFor is set to null for unsold items
       }
     }
+
+    // Update UI
+    updateItemUIInModal(itemId, updatedItem);
+    updatePurchaseProfit(purchaseId);
+    updateTotalProfit();
 
     return updatedItem;
   } catch (error) {
     console.error('Error in markAsUnsold:', error);
     throw error;
+  }
+}
+
+function updateItemUI(itemId, updatedItem) {
+  const itemElement = document.querySelector(`li[data-item-id="${itemId}"]`);
+  if (itemElement) {
+    // Update status
+    const statusElement = itemElement.querySelector('.item-status');
+    if (statusElement) {
+      statusElement.innerHTML = `
+        <i class="fas ${updatedItem.status === 'Sold' ? 'fa-check-circle' : 'fa-clock'}"></i>
+        Status: ${updatedItem.status}
+      `;
+    }
+
+    // Update sold for information
+    let soldForElement = itemElement.querySelector('.item-sold-for');
+    if (updatedItem.status === 'Sold') {
+      if (!soldForElement) {
+        soldForElement = document.createElement('span');
+        soldForElement.className = 'item-sold-for';
+        itemElement.querySelector('.item-details').appendChild(soldForElement);
+      }
+      soldForElement.textContent = `Sold for: ${updatedItem.soldFor.toFixed(2)} €`;
+    } else if (soldForElement) {
+      soldForElement.remove();
+    }
+
+    // Update button
+    const actionButton = itemElement.querySelector('.action-button');
+    if (actionButton) {
+      actionButton.textContent = updatedItem.status === 'Sold' ? 'Mark as Unsold' : 'Mark as Sold';
+      actionButton.className = `action-button ${updatedItem.status === 'Sold' ? 'secondary mark-unsold' : 'primary mark-sold'}`;
+    }
   }
 }
 
