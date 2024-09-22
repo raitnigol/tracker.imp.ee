@@ -41,7 +41,10 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/api/auth', authRouter(db));
-app.use('/api/purchases', authenticateToken, purchasesRouter(db));
+app.use('/api/purchases', authenticateToken, (req, res, next) => {
+  console.log('Purchases route accessed:', req.method, req.url);
+  next();
+}, purchasesRouter(db));
 app.use('/api/purchases', authenticateToken, itemsRouter(db));
 
 // Serve the login page
@@ -58,3 +61,4 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+

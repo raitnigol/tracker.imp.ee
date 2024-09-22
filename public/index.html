@@ -87,7 +87,7 @@
               <span class="close">&times;</span>
             </div>
             <div class="modal-body">
-              <form id="item-form">
+              <form id="add-item-form">
                 <div class="form-row">
                   <label for="item-platform">Platform:</label>
                   <select id="item-platform" required>
@@ -109,11 +109,11 @@
                   <label for="item-name">Item Name:</label>
                   <input type="text" id="item-name" placeholder="e.g., God of War" required>
                 </div>
+                <div class="modal-footer">
+                  <button type="button" class="action-button secondary" id="cancel-add-item">Cancel</button>
+                  <button type="submit" class="action-button primary">Add Item</button>
+                </div>
               </form>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="action-button secondary" id="cancel-add-item">Cancel</button>
-              <button type="submit" form="item-form" class="action-button primary">Add Item</button>
             </div>
           </div>
         </div>
@@ -178,3 +178,4 @@
   </div>
 </body>
 </html>
+

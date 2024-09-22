@@ -1,9 +1,15 @@
-import { purchases, calculateProfit, setCurrentPurchase, setPurchaseToDelete } from './purchases.js';
+import { purchases, setCurrentPurchase, setPurchaseToDelete } from './purchases.js';
+import { calculateProfit } from './utils.js';
 import { updatePagination, itemsPerPage, getCurrentPage } from './pagination.js';
 import { openModal, openViewItemsModal } from './uiModalHandling.js';  // Add openViewItemsModal here
 
 export function displayPurchases() {
+  console.log('Displaying purchases. Total purchases:', purchases.length);
   const purchaseList = document.getElementById('purchase-list');
+  if (!purchaseList) {
+    console.error('Purchase list element not found');
+    return;
+  }
   purchaseList.innerHTML = '';
 
   const purchasesGrid = document.createElement('div');
@@ -13,6 +19,8 @@ export function displayPurchases() {
   const startIndex = (getCurrentPage() - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const purchasesToDisplay = purchases.slice(startIndex, endIndex);
+
+  console.log('Purchases to display:', purchasesToDisplay);
 
   // Always create 4 card slots
   for (let i = 0; i < 4; i++) {
@@ -62,7 +70,7 @@ function createPurchaseCard(purchase, profit) {
     openModal('item-modal');
   });
 
-  const deleteBtn = createButton('Delete', 'delete', () => openDeleteConfirmModal(purchase));
+  const deleteBtn = createButton('Delete', 'delete', () => openDeleteConfirmModal(purchase.id));  // Pass only the ID
 
   actions.appendChild(viewItemsBtn);
   actions.appendChild(addItemBtn);
@@ -94,8 +102,8 @@ function updateTotalProfitDisplay(totalProfit) {
   profitElement.className = 'profit-amount ' + (totalProfit >= 0 ? 'positive' : 'negative');
 }
 
-export function openDeleteConfirmModal(purchase) {
-  setPurchaseToDelete(purchase);
+export function openDeleteConfirmModal(purchaseId) {
+  setPurchaseToDelete(purchaseId);
   openModal('delete-confirm-modal');
 }
 
@@ -106,17 +114,61 @@ function createPlaceholderCard() {
   return card;
 }
 
-function createItemElement(item, purchaseId) {
-  // ... existing code ...
+export function createItemElement(item, purchaseId) {
+  const itemElement = document.createElement('li');
+  itemElement.dataset.itemId = item.id;
+  itemElement.dataset.purchaseId = purchaseId;
+  itemElement.dataset.status = item.status;  // Add this line
 
-  if (item.status !== 'Sold') {
-    const markAsSoldBtn = document.createElement('button');
-    markAsSoldBtn.textContent = 'Mark as Sold';
-    markAsSoldBtn.className = 'action-button secondary mark-as-sold-btn';
-    markAsSoldBtn.dataset.itemId = item.id;
-    markAsSoldBtn.dataset.purchaseId = purchaseId;
-    itemActions.appendChild(markAsSoldBtn);
+  const itemInfo = document.createElement('div');
+  itemInfo.className = 'item-info';
+
+  const itemDetails = document.createElement('div');
+  itemDetails.className = 'item-details';
+  itemDetails.innerHTML = `
+    <span class="item-name">${item.name}</span>
+    <span class="item-type">${item.type}</span>
+    <span class="item-platform">${item.platform}</span>
+    <span class="item-status">
+      <i class="fas ${item.status === 'Sold' ? 'fa-check-circle' : 'fa-clock'}"></i>
+      Status: ${item.status}
+    </span>
+  `;
+
+  if (item.status === 'Sold') {
+    const soldForElement = document.createElement('span');
+    soldForElement.className = 'item-sold-for';
+    soldForElement.textContent = `Sold for: ${item.soldFor.toFixed(2)} €`;
+    itemDetails.appendChild(soldForElement);
   }
 
-  // ... rest of the function ...
+  itemInfo.appendChild(itemDetails);
+
+  const itemActions = document.createElement('div');
+  itemActions.className = 'item-actions';
+
+  const actionButton = document.createElement('button');
+  actionButton.textContent = item.status === 'Sold' ? 'Mark as Unsold' : 'Mark as Sold';
+  actionButton.className = `action-button ${item.status === 'Sold' ? 'secondary mark-unsold' : 'primary mark-sold'}`;
+  actionButton.dataset.itemId = item.id;
+
+  const editItemBtn = document.createElement('button');
+  editItemBtn.textContent = 'Edit';
+  editItemBtn.className = 'action-button secondary edit-item';
+  editItemBtn.dataset.itemId = item.id;
+
+  const deleteItemBtn = document.createElement('button');
+  deleteItemBtn.textContent = 'Delete';
+  deleteItemBtn.className = 'action-button delete delete-item-btn';
+  deleteItemBtn.dataset.itemId = item.id;
+
+  itemActions.appendChild(actionButton);
+  itemActions.appendChild(editItemBtn);
+  itemActions.appendChild(deleteItemBtn);
+
+  itemElement.appendChild(itemInfo);
+  itemElement.appendChild(itemActions);
+
+  return itemElement;
 }
+

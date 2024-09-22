@@ -17,6 +17,10 @@ function itemsRouter(db) {
   `);
   const deleteItem = db.prepare('DELETE FROM items WHERE id = ? AND purchase_id = ?');
 
+  // Prepare new statements
+  const markItemAsSold = db.prepare("UPDATE items SET status = 'Sold', soldFor = ? WHERE id = ? AND purchase_id = ?");
+  const markItemAsUnsold = db.prepare("UPDATE items SET status = 'Unsold', soldFor = NULL WHERE id = ? AND purchase_id = ?");
+
   // POST: Add a new item
   router.post('/:id/items', (req, res) => {
     const { id } = req.params;
@@ -92,6 +96,41 @@ function itemsRouter(db) {
     } catch (error) {
       console.error('Error deleting item:', error);
       res.status(500).json({ message: 'Failed to delete item', error: error.message });
+    }
+  });
+
+  // PUT: Mark an item as sold
+  router.put('/:purchaseId/items/:itemId/mark-sold', (req, res) => {
+    const { purchaseId, itemId } = req.params;
+    const { soldFor } = req.body;
+    try {
+      const result = markItemAsSold.run(soldFor, itemId, purchaseId);
+      if (result.changes > 0) {
+        const updatedItem = getItem.get(itemId, purchaseId);
+        res.json(updatedItem);
+      } else {
+        res.status(404).json({ message: 'Item not found' });
+      }
+    } catch (error) {
+      console.error('Error marking item as sold:', error);
+      res.status(500).json({ message: 'Failed to mark item as sold', error: error.message });
+    }
+  });
+
+  // PUT: Mark an item as unsold
+  router.put('/:purchaseId/items/:itemId/mark-unsold', (req, res) => {
+    const { purchaseId, itemId } = req.params;
+    try {
+      const result = markItemAsUnsold.run(itemId, purchaseId);
+      if (result.changes > 0) {
+        const updatedItem = getItem.get(itemId, purchaseId);
+        res.json(updatedItem);
+      } else {
+        res.status(404).json({ message: 'Item not found' });
+      }
+    } catch (error) {
+      console.error('Error marking item as unsold:', error);
+      res.status(500).json({ message: 'Failed to mark item as unsold', error: error.message });
     }
   });
 

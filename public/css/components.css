@@ -51,6 +51,16 @@ button {
     background-color: #ffcdd2;
   }
   
+  .action-button.mark-sold {
+    background-color: #4CAF50; /* Green */
+    color: white;
+  }
+
+  .action-button.mark-unsold {
+    background-color: #008CBA; /* Blue */
+    color: white;
+  }
+  
   .purchase-card {
     background-color: #fff; /* Neutral background color */
     border-radius: 12px;
@@ -200,4 +210,46 @@ button {
   .purchase-actions {
     gap: 8px;
   }
+}
+
+/* Add or update these styles */
+.item-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.item-actions button {
+  flex: 0 0 auto;
+  min-width: 100px;
+}
+
+.item-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item-details {
+  flex: 1;
+}
+
+.item-status, .item-sold-for {
+  margin-left: 10px;
+}
+
+.action-button.primary {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.action-button.secondary {
+  background-color: #008CBA;
+  color: white;
+}
+
+.action-button.delete {
+  background-color: #f44336;
+  color: white;
 }

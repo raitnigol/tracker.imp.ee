@@ -20,8 +20,22 @@ function purchasesRouter(db) {
 
   router.post('/', (req, res) => {
     const { name, price } = req.body;
-    const result = insertPurchase.run(name, price);
-    res.json({ id: result.lastInsertRowid, name, price, items: [] });
+    console.log('Received new purchase request:', { name, price });
+    try {
+      const result = insertPurchase.run(name, price);
+      console.log('Insert result:', result);
+      const newPurchase = {
+        id: result.lastInsertRowid,
+        name,
+        price,
+        items: []
+      };
+      console.log('New purchase added:', newPurchase);
+      res.status(201).json(newPurchase);
+    } catch (error) {
+      console.error('Error adding purchase:', error);
+      res.status(500).json({ message: 'Failed to add purchase', error: error.message });
+    }
   });
 
   router.put('/:id', (req, res) => {
@@ -31,23 +45,35 @@ function purchasesRouter(db) {
     res.json({ id, name, price });
   });
 
+  // Update the delete route
   router.delete('/:id', (req, res) => {
     const { id } = req.params;
-    const deleteItems = db.prepare('DELETE FROM items WHERE purchase_id = ?');
-    const deletePurchase = db.prepare('DELETE FROM purchases WHERE id = ?');
-    
-    db.transaction(() => {
-      deleteItems.run(id);
-      const result = deletePurchase.run(id);
-      if (result.changes > 0) {
-        res.json({ message: 'Purchase and associated items deleted successfully' });
-      } else {
-        res.status(404).json({ message: 'Purchase not found' });
-      }
-    })();
+    console.log('Received delete request for purchase:', id);
+    try {
+      const deleteItems = db.prepare('DELETE FROM items WHERE purchase_id = ?');
+      const deletePurchase = db.prepare('DELETE FROM purchases WHERE id = ?');
+      
+      db.transaction(() => {
+        const itemsResult = deleteItems.run(id);
+        console.log('Deleted items:', itemsResult.changes);
+        const purchaseResult = deletePurchase.run(id);
+        console.log('Delete purchase result:', purchaseResult);
+        if (purchaseResult.changes > 0) {
+          console.log('Purchase deleted successfully');
+          res.json({ message: 'Purchase and associated items deleted successfully' });
+        } else {
+          console.log('Purchase not found');
+          res.status(404).json({ message: 'Purchase not found' });
+        }
+      })();
+    } catch (error) {
+      console.error('Error deleting purchase:', error);
+      res.status(500).json({ message: 'Error deleting purchase', error: error.message });
+    }
   });
 
   return router;
 }
 
 module.exports = purchasesRouter;
+
