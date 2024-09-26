@@ -44,3 +44,26 @@ input, select {
     margin-bottom: 3px;
   }
 }
+
+@media screen and (max-width: 480px) {
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-row label,
+  .form-row input,
+  .form-row select {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions button {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
+

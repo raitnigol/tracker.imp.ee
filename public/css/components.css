@@ -112,6 +112,20 @@ button {
     margin-bottom: 16px;
     flex-grow: 1; /* Allow this to grow and take up available space */
     overflow: hidden; /* Hide overflow content */
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  
+  .purchase-info p {
+    margin: 5px 0;
+    width: 48%;
+  }
+
+  @media screen and (max-width: 480px) {
+    .purchase-info p {
+      width: 100%;
+    }
   }
   
   .purchase-profit {
@@ -253,3 +267,27 @@ button {
   background-color: #f44336;
   color: white;
 }
+
+@media screen and (max-width: 480px) {
+  .item-card {
+    flex-direction: column;
+  }
+
+  .item-info {
+    width: 100%;
+  }
+
+  .item-actions {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  button, .action-button {
+    min-height: 44px;
+    padding: 10px 15px;
+  }
+}
+
