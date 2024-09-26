@@ -2,7 +2,7 @@ import { handleItemSubmit, handleEditItem, handleDeleteItem, handleMarkAsSold } 
 import { markAsSold, markAsUnsold, deleteItem } from './itemOperations.js';
 import { handlePurchaseSubmit, deletePurchase, getPurchaseToDelete, setPurchaseToDelete, purchases } from './purchases.js';
 import { closeModal, openModal } from './uiModalHandling.js';
-import { openViewItemsModal } from './uiItemsModal.js';
+import { openViewItemsModal, updateViewItemsModalProfit } from './uiItemsModal.js';
 import { displayPurchases, updateTotalProfit, createItemElement } from './uiPurchaseDisplay.js';
 import { calculateProfit } from './utils.js';
 import { fetchWithAuth } from './auth.js';
@@ -113,13 +113,7 @@ export function setupEventListeners() {
       } else {
         try {
           await markAsUnsold(purchaseId, itemId);
-          e.target.textContent = 'Mark as Sold';
-          e.target.classList.remove('secondary', 'mark-unsold');
-          e.target.classList.add('primary', 'mark-sold');
-          const statusElement = e.target.closest('.item-card').querySelector('.item-status');
-          if (statusElement) {
-            statusElement.textContent = 'Status: Unsold';
-          }
+          // The UI update is now handled inside the markAsUnsold function
         } catch (error) {
           console.error('Error marking item as unsold:', error);
           alert('Failed to mark item as unsold. Please try again.');

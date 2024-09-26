@@ -58,10 +58,17 @@ function setupItemSearch() {
 }
 
 export function updateViewItemsModalProfit(purchase) {
-  const modalProfitElement = document.querySelector('#view-items-modal .modal-profit');
-  if (modalProfitElement) {
-    const profit = calculateProfit(purchase);
-    modalProfitElement.textContent = `Profit: ${profit.toFixed(2)} €`;
-    modalProfitElement.className = `modal-profit ${profit >= 0 ? 'positive' : 'negative'}`;
+  const modal = document.getElementById('view-items-modal');
+  const profit = calculateProfit(purchase);
+  const profitElement = modal.querySelector('.modal-profit');
+  if (profitElement) {
+    profitElement.textContent = `Profit: ${profit.toFixed(2)} €`;
+    profitElement.className = `modal-profit ${profit >= 0 ? 'positive' : 'negative'}`;
+  }
+  
+  // Update the purchase summary
+  const purchaseSummary = document.getElementById('purchase-summary');
+  if (purchaseSummary) {
+    updatePurchaseSummary(purchase, purchaseSummary);
   }
 }

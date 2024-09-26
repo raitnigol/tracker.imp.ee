@@ -1,6 +1,7 @@
-import { fetchWithAuth } from './auth.js';
 import { purchases, updatePurchase } from './purchases.js';
 import { updatePurchaseCard, updateTotalProfit } from './uiPurchaseDisplay.js';
+import { updateViewItemsModalProfit } from './uiItemsModal.js';
+import { fetchWithAuth } from './auth.js';
 
 export async function addItem(purchaseId, itemData) {
   try {
@@ -140,29 +141,39 @@ export async function markAsUnsold(purchaseId, itemId) {
     const updatedItem = await response.json();
     updatePurchaseWithUpdatedItem(purchaseId, updatedItem);
 
-    // Update the button color, text, and status
+    // Update the UI
     const itemElement = document.querySelector(`[data-item-id="${itemId}"]`);
     if (itemElement) {
+      // Update button
       const button = itemElement.querySelector('.mark-unsold');
       if (button) {
         button.textContent = 'Mark as Sold';
         button.classList.remove('secondary', 'mark-unsold');
         button.classList.add('primary', 'mark-sold');
       }
+      
+      // Update status
       const statusElement = itemElement.querySelector('.item-status');
       if (statusElement) {
         statusElement.textContent = 'Status: Unsold';
       }
-      // Remove the "Sold for" text
-      const soldForElement = itemElement.querySelector('.sold-for');
-      if (soldForElement) {
+      
+      // Remove "Sold for" text
+      const soldForElement = itemElement.querySelector('.item-info p:last-child');
+      if (soldForElement && soldForElement.textContent.startsWith('Sold for:')) {
         soldForElement.remove();
       }
     }
 
+    // Update the profit in the purchase card/modal
+    const purchase = purchases.find(p => p.id === parseInt(purchaseId));
+    if (purchase) {
+      updateViewItemsModalProfit(purchase);
+    }
+
     return updatedItem;
   } catch (error) {
-    console.error('Error in markItemAsUnsold:', error);
+    console.error('Error in markAsUnsold:', error);
     throw error;
   }
 }
@@ -176,6 +187,7 @@ function updatePurchaseWithUpdatedItem(purchaseId, updatedItem) {
       updatePurchase(purchase);
       updatePurchaseCard(purchase);
       updateTotalProfit();
+      updateViewItemsModalProfit(purchase);
     }
   }
 }
