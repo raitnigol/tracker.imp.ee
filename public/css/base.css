@@ -21,18 +21,6 @@
     --error-color-dark: #d32f2f;
   }
   
-  [data-theme="dark"] {
-    --color-text: #f0f0f0;
-    --color-text-light: #d0d0d0;
-    --color-heading: #ffffff;
-    --background-color: #333333;
-    --primary-color: #81c784;
-    --secondary-color: #64b5f6;
-    --accent-color: #ffd54f;
-    --error-color: #e57373;
-    --success-color: #81c784;
-  }
-  
   body {
     font-family: var(--font-primary);
     font-size: var(--font-size-base);
@@ -43,3 +31,4 @@
     margin: 0;
     padding: 0;
   }
+

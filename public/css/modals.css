@@ -249,13 +249,17 @@
     font-weight: bold;
     cursor: pointer;
     transition: color 0.3s;
+    background-color: transparent;
+    border: none;
+    padding: 0;
 }
 
 .close:hover,
 .close:focus {
-    color: var(--primary-color);
+    color: #333;
     text-decoration: none;
     cursor: pointer;
+    background-color: transparent;
 }
 
 @media screen and (max-width: 844px) {
@@ -280,4 +284,5 @@
         padding-top: 15px;
     }
 }
+
 

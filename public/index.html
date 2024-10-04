@@ -3,65 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Nigol's Purchase Tracker - Track your purchases and profits easily">
   <title>Nigol's Purchase Tracker</title>
-  <link rel="stylesheet" href="/css/base.css">
-  <link rel="stylesheet" href="/css/typography.css">
-  <link rel="stylesheet" href="/css/layout.css">
-  <link rel="stylesheet" href="/css/components.css">
-  <link rel="stylesheet" href="/css/forms.css">
-  <link rel="stylesheet" href="/css/modals.css">
-  <link rel="stylesheet" href="/css/utilities.css">
-  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-  <style>
-    .hidden {
-      display: none;
-    }
-  </style>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <script type="module" src="/js/app.js" defer></script>
 </head>
 <body>
-  <div id="loading">Loading...</div>
-  <div id="app-content" class="hidden">
+  <div id="loading" aria-live="polite">Loading...</div>
+  <main id="app-content" class="hidden">
     <div class="app-wrapper">
       <div class="app-container">
         <header id="app-header">
           <h1>Nigol's Purchase Tracker</h1>
-          <div id="user-info">
-            <span id="user-icon"></span>
+          <nav id="user-info">
+            <span id="user-icon" aria-hidden="true"></span>
             <span id="username-display"></span>
             <button id="logout-button">Log Out</button>
-          </div>
+          </nav>
         </header>
         
         <!-- Total Profit Display -->
-        <div id="total-profit-container">
-          <h2>Total Profit</h2>
+        <section id="total-profit-container" aria-labelledby="total-profit-heading">
+          <h2 id="total-profit-heading">Total Profit</h2>
           <span id="total-profit-amount"></span>
-        </div>
+        </section>
 
         <!-- Display Recent Purchases -->
-        <section id="recent-purchases">
-          <h2 class="section-title">Recent Purchases</h2>
+        <section id="recent-purchases" aria-labelledby="recent-purchases-heading">
+          <h2 id="recent-purchases-heading" class="section-title">Recent Purchases</h2>
           <div class="purchases-container">
-            <div id="purchase-list">
+            <div id="purchase-list" aria-live="polite">
               <!-- Purchases will be dynamically added here -->
             </div>
           </div>
-          <div id="pagination-controls">
+          <nav id="pagination-controls" aria-label="Pagination">
             <!-- Pagination will be dynamically added here -->
-          </div>
+          </nav>
         </section>
 
         <!-- Add New Purchase Button -->
         <button id="add-purchase-btn" class="action-button primary">Add New Purchase</button>
 
         <!-- Modal for Adding New Purchase -->
-        <div id="add-purchase-modal" class="modal">
-          <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Add New Purchase</h2>
+        <div id="add-purchase-modal" class="modal" aria-hidden="true">
+          <div class="modal-content" role="dialog" aria-labelledby="add-purchase-title">
+            <header class="modal-header">
+              <h2 id="add-purchase-title">Add New Purchase</h2>
+              <button class="close" aria-label="Close">&times;</button>
+            </header>
             <form id="purchase-form">
               <div class="form-row">
                 <label for="purchase-name">Purchase Name:</label>
@@ -81,11 +74,11 @@
         </div>
 
         <!-- Modal for Adding Items -->
-        <div id="item-modal" class="modal">
-          <div class="modal-content">
+        <div id="item-modal" class="modal" aria-hidden="true">
+          <div class="modal-content" role="dialog" aria-labelledby="add-item-title">
             <div class="modal-header">
-              <h2>Add Item to Purchase</h2>
-              <span class="close">&times;</span>
+              <h2 id="add-item-title">Add Item to Purchase</h2>
+              <button class="close" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
               <form id="add-item-form">
@@ -120,11 +113,11 @@
         </div>
 
         <!-- Modal for Viewing Items -->
-        <div id="view-items-modal" class="modal">
-          <div class="modal-content">
+        <div id="view-items-modal" class="modal" aria-hidden="true">
+          <div class="modal-content" role="dialog" aria-labelledby="view-items-title">
             <div class="modal-header">
-              <h2>Items in Purchase</h2>
-              <span class="close">&times;</span>
+              <h2 id="view-items-title">Items in Purchase</h2>
+              <button class="close" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
               <div id="purchase-summary"></div>
@@ -138,11 +131,11 @@
           </div>
         </div>
         <!-- Add this near your other modals -->
-        <div id="mark-as-sold-modal" class="modal">
-          <div class="modal-content">
+        <div id="mark-as-sold-modal" class="modal" aria-hidden="true">
+          <div class="modal-content" role="dialog" aria-labelledby="mark-as-sold-title">
             <div class="modal-header">
-              <h2>Mark Item as Sold</h2>
-              <span class="close">&times;</span>
+              <h2 id="mark-as-sold-title">Mark Item as Sold</h2>
+              <button class="close" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
               <form id="mark-as-sold-form">
@@ -159,11 +152,11 @@
           </div>
         </div>
         <!-- Modal for Delete Confirmation -->
-        <div id="delete-confirm-modal" class="modal">
-          <div class="modal-content">
+        <div id="delete-confirm-modal" class="modal" aria-hidden="true">
+          <div class="modal-content" role="dialog" aria-labelledby="delete-confirm-title">
             <div class="modal-header">
-              <h2>Confirm Deletion</h2>
-              <span class="close">&times;</span>
+              <h2 id="delete-confirm-title">Confirm Deletion</h2>
+              <button class="close" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
               <p>Are you sure you want to delete this purchase?</p>
@@ -176,8 +169,9 @@
         </div>
       </div>
     </div>
-  </div>
+  </main>
 </body>
 </html>
+
 
 
